@@ -3,8 +3,97 @@ output:
   pdf_document: default
   html_document: default
 ---
-P# MPDW
-tugas semester 5
-amal cantik
-heheheheheheheheheh
-kazuha bucin iwang
+install packagesnya dulu kan
+```{r}
+#install.packages("forecast")
+#install.packages("graphics")
+#install.packages("TTR")
+#install.packages("TSA")
+```
+
+nah ini udah selesai dan kita panggil
+```{r}
+library("forecast")
+library("graphics")
+library("TTR")
+library("TSA")
+```
+
+ini untuk manggil data dari github gitu
+```{r}
+#install.packages("rio") #install jika belum ada
+library(rio)
+data1 <- import("https://raw.githubusercontent.com/Safwa40/MPDW/main/Pertemuan%201/Data1.csv")
+```
+
+lihat datanya
+```{r}
+View(data1)
+str(data1)
+dim(data1)
+```
+
+ngubah data jadi time series
+```{r}
+data1ts <- ts(data1$`Batubara(USD/ton)`)
+```
+
+ini untuk ngeliat analisis datanya
+```{r}
+summary(data1ts)
+```
+
+nah ini bikin plot dan didapat plotnya berbentuk siklik
+kenapa siklik? karena kalau dari saya baca dia tuh naik turunnya gak membagi jadi musiman gitu loh, klo tren juga gak mungkin, dan fluktuasi juga enggak karena naik turun.
+```{r}
+ts.plot(data1ts, xlab="Time Period", ylab="Harga Acuan Batu Bara (USD/ton)", 
+        main = "Time Series Plot")
+points(data1ts)
+```
+
+
+```{r}
+## Single Moving Average & Double Moving Average
+
+### Pembagian Data
+
+#Pembagian data latih dan data uji dilakukan dengan perbandingan 80% data latih dan 20% data uji.
+#membagi data latih dan data uji
+training_ma <- data1[1:96,]
+testing_ma <- data1[97:120,]
+train_ma.ts <- ts(training_ma$`Batubara(USD/ton)`)
+test_ma.ts <- ts(testing_ma$`Batubara(USD/ton)`)
+```
+
+### Eksplorasi Data
+
+Eksplorasi data dilakukan pada keseluruhan data, data latih serta data uji menggunakan plot data deret waktu.
+
+```{r}
+#eksplorasi keseluruhan data
+plot(data1ts, col="red",main="Plot semua data")
+points(data1ts)
+
+#eksplorasi data latih
+plot(train_ma.ts, col="blue",main="Plot data latih")
+points(train_ma.ts)
+
+#eksplorasi data uji
+plot(test_ma.ts, col="blue",main="Plot data uji")
+points(test_ma.ts)
+```
+
+Eksplorasi data juga dapat dilakukan menggunakan package `ggplot2` dengan terlebih dahulu memanggil library *package* `ggplot2`.
+
+```{r}
+#Eksplorasi dengan GGPLOT
+library(ggplot2)
+ggplot() + 
+  geom_line(data = training_ma, aes(x = 'Batubara(USD/ton)', y = Periodebulan, col = "Data Latih")) +
+  geom_line(data = testing_ma, aes(x = 'Batubara(USD/ton)', y = Periodebulan, col = "Data Uji")) +
+  labs(x = "Periodebulan", y = "Batubara(USD/ton)", color = "Legend") +
+  scale_colour_manual(name="Keterangan:", breaks = c("Data Latih", "Data Uji"),
+                      values = c("blue", "red")) + 
+  theme_bw() + theme(legend.position = "bottom",
+                     plot.caption = element_text(hjust=0.5, size=12))
+```
