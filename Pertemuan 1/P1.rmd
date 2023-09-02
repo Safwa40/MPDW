@@ -97,4 +97,4 @@ ggplot() +
   theme_bw() + theme(legend.position = "bottom",
                      plot.caption = element_text(hjust=0.5, size=12))
 ```
-kok gak bisa sihh bingung deh
+kok gak bisa sihh bingung deh. Kenapasih kok bedaaaaaa
