@@ -51,7 +51,7 @@ ts.plot(data1ts, xlab="Time Period", ylab="Harga Acuan Batu Bara (USD/ton)",
 points(data1ts)
 ```
 
-
+ini blm nnti mau coba lagi
 ```{r}
 ## Single Moving Average & Double Moving Average
 
