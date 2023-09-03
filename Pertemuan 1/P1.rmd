@@ -11,7 +11,7 @@ install packagesnya dulu kan
 #install.packages("TSA")
 ```
 
-nah ini udah selesai dan kita panggil
+nah ini udah selesai dan kita panggil....
 ```{r}
 library("forecast")
 library("graphics")
