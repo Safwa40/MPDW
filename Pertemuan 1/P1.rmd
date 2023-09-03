@@ -23,7 +23,7 @@ ini untuk manggil data dari github gitu
 ```{r}
 #install.packages("rio") #install jika belum ada
 library(rio)
-data1 <- import("https://raw.githubusercontent.com/Safwa40/MPDW/main/Pertemuan%201/Data1.csv")
+data1 <- import("https://raw.githubusercontent.com/Safwa40/MPDW/main/Data/Data1.csv")
 ```
 
 lihat datanya
@@ -35,7 +35,8 @@ dim(data1)
 
 ngubah data jadi time series
 ```{r}
-data1ts <- ts(data1$`Batubara(USD/ton)`)
+data1ts <- ts(data1$'Batubara(USD/ton)')
+print(data1ts)
 ```
 
 ini untuk ngeliat analisis datanya
@@ -50,17 +51,14 @@ ts.plot(data1ts, xlab="Time Period", ylab="Harga Acuan Batu Bara (USD/ton)",
         main = "Time Series Plot")
 points(data1ts)
 ```
+Single Moving Average & Double Moving Average
 
-ini blm nnti mau coba lagi
+Pembagian Data
 ```{r}
-## Single Moving Average & Double Moving Average
-
-### Pembagian Data
-
 #Pembagian data latih dan data uji dilakukan dengan perbandingan 80% data latih dan 20% data uji.
 #membagi data latih dan data uji
-training_ma <- data1[1:96,]
-testing_ma <- data1[97:120,]
+training_ma <- data1[1:102,]
+testing_ma <- data1[103:128,]
 train_ma.ts <- ts(training_ma$`Batubara(USD/ton)`)
 test_ma.ts <- ts(testing_ma$`Batubara(USD/ton)`)
 ```
@@ -97,4 +95,59 @@ ggplot() +
   theme_bw() + theme(legend.position = "bottom",
                      plot.caption = element_text(hjust=0.5, size=12))
 ```
-kok gak bisa sihh bingung deh. Kenapasih kok bedaaaaaa
+#Double Moving Average (DMA)#
+Metode pemulusan Double Moving Average (DMA) pada dasarnya mirip dengan SMA. Namun demikian, metode ini lebih cocok digunakan untuk pola data trend. Proses pemulusan dengan rata rata dalam metode ini dilakukan sebanyak 2 kali.
+
+```{r}
+data.sma<-SMA(train_ma.ts, n=4)
+data.sma
+
+dma <- SMA(data.sma, n = 4)
+At <- 2*data.sma - dma
+Bt <- 2/(4-1)*(data.sma - dma)
+data.dma<- At+Bt
+data.ramal2<- c(NA, data.dma)
+
+t = 1:24
+f = c()
+
+for (i in t) {
+  f[i] = At[length(At)] + Bt[length(Bt)]*(i)
+}
+
+data.gab2 <- cbind(aktual = c(train_ma.ts,rep(NA,24)), pemulusan1 = c(data.sma,rep(NA,24)),pemulusan2 = c(data.dma, rep(NA,24)),At = c(At, rep(NA,24)), Bt = c(Bt,rep(NA,24)),ramalan = c(data.ramal2, f[-1]))
+data.gab2
+```
+
+Hasil pemulusan menggunakan metode DMA divisualisasikan sebagai berikut
+
+```{r}
+ts.plot(data1ts, xlab="Time Period ", ylab="Batubara(USD/ton)", main= "DMA N=4 Batubara(USD/ton)")
+points(data1ts)
+lines(data.gab2[,3],col="green",lwd=2)
+lines(data.gab2[,6],col="red",lwd=2)
+legend("topleft",c("data aktual","data pemulusan","data peramalan"), lty=8, col=c("black","green","red"), cex=0.8)
+
+```
+
+```{r}
+ts.plot(data1ts, xlab="Time Period ", ylab="Sales", main= "DMA N=4 Data Sales")
+points(data1s)
+lines(data.gab2[,3],col="green",lwd=2)
+lines(data.gab2[,6],col="red",lwd=2)
+legend("topleft",c("data aktual","data pemulusan","data peramalan"), lty=8, col=c("black","green","red"), cex=0.8)
+```
+
+```{r}
+#Menghitung nilai keakuratan data latih
+error_train.dma = train_ma.ts-data.ramal2[1:length(train_ma.ts)]
+SSE_train.dma = sum(error_train.dma[8:length(train_ma.ts)]^2)
+MSE_train.dma = mean(error_train.dma[8:length(train_ma.ts)]^2)
+MAPE_train.dma = mean(abs((error_train.dma[8:length(train_ma.ts)]/train_ma.ts[8:length(train_ma.ts)])*100))
+
+akurasi_train.dma <- matrix(c(SSE_train.dma, MSE_train.dma, MAPE_train.dma))
+row.names(akurasi_train.dma)<- c("SSE", "MSE", "MAPE")
+colnames(akurasi_train.dma) <- c("Akurasi m = 4")
+akurasi_train.dma
+```
+
