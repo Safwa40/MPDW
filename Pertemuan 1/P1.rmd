@@ -119,7 +119,7 @@ data.gab2 <- cbind(aktual = c(train_ma.ts,rep(NA,24)), pemulusan1 = c(data.sma,r
 data.gab2
 ```
 
-Hasil pemulusan menggunakan metode DMA divisualisasikan sebagai berikut
+Hasil pemulusan menggunakan metode DMA divisualisasikan sebagai berikut yakannnnnnnnn
 
 ```{r}
 ts.plot(data1ts, xlab="Time Period ", ylab="Batubara(USD/ton)", main= "DMA N=4 Batubara(USD/ton)")
