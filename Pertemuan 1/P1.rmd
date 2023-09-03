@@ -95,6 +95,7 @@ ggplot() +
   theme_bw() + theme(legend.position = "bottom",
                      plot.caption = element_text(hjust=0.5, size=12))
 ```
+<<<<<<< HEAD
 #Double Moving Average (DMA)#
 Metode pemulusan Double Moving Average (DMA) pada dasarnya mirip dengan SMA. Namun demikian, metode ini lebih cocok digunakan untuk pola data trend. Proses pemulusan dengan rata rata dalam metode ini dilakukan sebanyak 2 kali.
 
@@ -152,3 +153,5 @@ akurasi_train.dma
 ```
 
 masih banyak yang belummm aaa panjang kali looooo.Gimana sihhhhhhh. Kenapa gak bisaaaa lohhhhhhh. Kan saya jadi bingunggggggggggg.....ffffffffff
+=======
+>>>>>>> c370465922e060a6f77c1fb2781507299b8a981e
