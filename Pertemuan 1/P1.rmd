@@ -151,4 +151,4 @@ colnames(akurasi_train.dma) <- c("Akurasi m = 4")
 akurasi_train.dma
 ```
 
-masih banyak yang belummm aaa panjang kali looooo.Gimana sihhhhhhh. Kenapa gak bisaaaa lohhhhhhh. Kan saya jadi bingunggggggggggg.....
+masih banyak yang belummm aaa panjang kali looooo.Gimana sihhhhhhh. Kenapa gak bisaaaa lohhhhhhh. Kan saya jadi bingunggggggggggg.....ffffffffff
