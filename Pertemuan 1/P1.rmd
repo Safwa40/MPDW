@@ -23,7 +23,7 @@ ini untuk manggil data dari github gitu
 ```{r}
 #install.packages("rio") #install jika belum ada
 library(rio)
-data1 <- import("https://raw.githubusercontent.com/Safwa40/MPDW/main/Data/Data1.csv")
+data1 <- import("https://raw.githubusercontent.com/Safwa40/MPDW/main/Pertemuan%201/Data1.csv")
 ```
 
 lihat datanya
@@ -44,16 +44,16 @@ ini untuk ngeliat analisis datanya
 summary(data1ts)
 ```
 
-nah ini bikin plot dan didapat plotnya berbentuk siklik
-kenapa siklik? karena kalau dari saya baca dia tuh naik turunnya gak membagi jadi musiman gitu loh, klo tren juga gak mungkin, dan fluktuasi juga enggak karena naik turun.
+nah ini bikin plot dan didapat plotnya berbentuk tren
+kenapa tren? karena kalau dari saya baca dia tuh naik turunnya gak membagi jadi musiman gitu loh dan kalau konstan juga enggak deh kayaknya
 ```{r}
 ts.plot(data1ts, xlab="Time Period", ylab="Harga Acuan Batu Bara (USD/ton)", 
         main = "Time Series Plot")
 points(data1ts)
 ```
-Single Moving Average & Double Moving Average
+Double Moving Average
 
-Pembagian Data
+Pembagian Data dulu
 ```{r}
 #Pembagian data latih dan data uji dilakukan dengan perbandingan 80% data latih dan 20% data uji.
 #membagi data latih dan data uji
@@ -73,7 +73,7 @@ plot(data1ts, col="red",main="Plot semua data")
 points(data1ts)
 
 #eksplorasi data latih
-plot(train_ma.ts, col="blue",main="Plot data latih")
+plot(train_ma.ts, col="black",main="Plot data latih")
 points(train_ma.ts)
 
 #eksplorasi data uji
@@ -87,8 +87,8 @@ Eksplorasi data juga dapat dilakukan menggunakan package `ggplot2` dengan terleb
 #Eksplorasi dengan GGPLOT
 library(ggplot2)
 ggplot() + 
-  geom_line(data = training_ma, aes(x = 'Batubara(USD/ton)', y = Periodebulan, col = "Data Latih")) +
-  geom_line(data = testing_ma, aes(x = 'Batubara(USD/ton)', y = Periodebulan, col = "Data Uji")) +
+  geom_line(data = training_ma, aes(x = Periodebulan, y = 'Batubara(USD/ton)', col = "Data Latih")) +
+  geom_line(data = testing_ma, aes(x = Periodebulan, y = 'Batubara(USD/ton)', col = "Data Uji")) +
   labs(x = "Periodebulan", y = "Batubara(USD/ton)", color = "Legend") +
   scale_colour_manual(name="Keterangan:", breaks = c("Data Latih", "Data Uji"),
                       values = c("blue", "red")) + 
@@ -99,13 +99,14 @@ ggplot() +
 #Double Moving Average (DMA)#
 Metode pemulusan Double Moving Average (DMA) pada dasarnya mirip dengan SMA. Namun demikian, metode ini lebih cocok digunakan untuk pola data trend. Proses pemulusan dengan rata rata dalam metode ini dilakukan sebanyak 2 kali.
 
+
 ```{r}
-data.sma<-SMA(train_ma.ts, n=4)
+data.sma<-SMA(train_ma.ts, n=2)
 data.sma
 
-dma <- SMA(data.sma, n = 4)
+dma <- SMA(data.sma, n = 2)
 At <- 2*data.sma - dma
-Bt <- 2/(4-1)*(data.sma - dma)
+Bt <- 2/(2-1)*(data.sma - dma)
 data.dma<- At+Bt
 data.ramal2<- c(NA, data.dma)
 
@@ -120,24 +121,16 @@ data.gab2 <- cbind(aktual = c(train_ma.ts,rep(NA,24)), pemulusan1 = c(data.sma,r
 data.gab2
 ```
 
-Hasil pemulusan menggunakan metode DMA divisualisasikan sebagai berikut yakannnnnnnnn
+Hasil pemulusan menggunakan metode DMA divisualisasikan sebagai berikut
 
 ```{r}
-ts.plot(data1ts, xlab="Time Period ", ylab="Batubara(USD/ton)", main= "DMA N=4 Batubara(USD/ton)")
-points(data1ts)
+ts.plot(data1ts, xlab="Time Period ", ylab="Batubara(USD/ton)", main= "DMA N=3 Batubara(USD/ton)")
 lines(data.gab2[,3],col="green",lwd=2)
 lines(data.gab2[,6],col="red",lwd=2)
 legend("topleft",c("data aktual","data pemulusan","data peramalan"), lty=8, col=c("black","green","red"), cex=0.8)
 
 ```
 
-```{r}
-ts.plot(data1ts, xlab="Time Period ", ylab="Sales", main= "DMA N=4 Data Sales")
-points(data1s)
-lines(data.gab2[,3],col="green",lwd=2)
-lines(data.gab2[,6],col="red",lwd=2)
-legend("topleft",c("data aktual","data pemulusan","data peramalan"), lty=8, col=c("black","green","red"), cex=0.8)
-```
 
 ```{r}
 #Menghitung nilai keakuratan data latih
@@ -148,10 +141,130 @@ MAPE_train.dma = mean(abs((error_train.dma[8:length(train_ma.ts)]/train_ma.ts[8:
 
 akurasi_train.dma <- matrix(c(SSE_train.dma, MSE_train.dma, MAPE_train.dma))
 row.names(akurasi_train.dma)<- c("SSE", "MSE", "MAPE")
-colnames(akurasi_train.dma) <- c("Akurasi m = 4")
+colnames(akurasi_train.dma) <- c("Akurasi m = 2")
 akurasi_train.dma
 ```
+Dengan nilai m yang berbeda dimulai dari 4, 3, dan 2 diperoleh nilai mape terekcil dengan nilai m = 2.
 
-masih banyak yang belummm aaa panjang kali looooo.Gimana sihhhhhhh. Kenapa gak bisaaaa lohhhhhhh. Kan saya jadi bingunggggggggggg.....ffffffffff
-=======
->>>>>>> c370465922e060a6f77c1fb2781507299b8a981e
+###Pemulusan dengan metode DSE
+
+Pembagian Data
+
+Pembagian data latih dan data uji dilakukan dengan perbandingan 80% data latih dan 20% data uji.
+
+```{r}
+#membagi training dan testing
+training<-data1[1:102,]
+testing<-data1[103:128,]
+train.ts <- ts(training$`Batubara(USD/ton)`)
+test.ts <- ts(testing$`Batubara(USD/ton)`)
+```
+
+```{r}
+#Lamda=0.2 dan gamma=0.2
+des.1<- HoltWinters(train.ts, gamma = FALSE, beta = 0.2, alpha = 0.2)
+plot(des.1)
+
+#ramalan
+ramalandes1<- forecast(des.1, h=10)
+ramalandes1
+
+#Lamda=0.6 dan gamma=0.3
+des.2<- HoltWinters(train.ts, gamma = FALSE, beta = 0.3, alpha = 0.6)
+plot(des.2)
+
+#ramalan
+ramalandes2<- forecast(des.2, h=10)
+ramalandes2
+```
+Selanjutnya jika ingin membandingkan plot data latih dan data uji adalah sebagai berikut.
+
+```{r}
+#Visually evaluate the prediction
+plot(data1ts)
+lines(des.1$fitted[,1], lty=2, col="blue")
+lines(ramalandes1$mean, col="red")
+```
+
+Untuk mendapatkan nilai parameter optimum dari DES, argumen `alpha` dan `beta` dapat dibuat `NULL` seperti berikut.
+
+```{r}
+#Lamda dan gamma optimum
+des.opt<- HoltWinters(train.ts, gamma = FALSE)
+des.opt
+plot(des.opt)
+
+#ramalan
+ramalandesopt<- forecast(des.opt, h=10)
+ramalandesopt
+```
+
+Selanjutnya akan dilakukan perhitungan akurasi pada data latih maupun data uji dengan ukuran akurasi SSE, MSE dan MAPE.
+
+#### Akurasi Data Latih
+
+```{r}
+#Akurasi Data Training
+ssedes.train1<-des.1$SSE
+msedes.train1<-ssedes.train1/length(train.ts)
+sisaandes1<-ramalandes1$residuals
+head(sisaandes1)
+
+mapedes.train1 <- sum(abs(sisaandes1[3:length(train.ts)]/train.ts[3:length(train.ts)])
+                      *100)/length(train.ts)
+
+akurasides.1 <- matrix(c(ssedes.train1,msedes.train1,mapedes.train1))
+row.names(akurasides.1)<- c("SSE", "MSE", "MAPE")
+colnames(akurasides.1) <- c("Akurasi lamda=0.2 dan gamma=0.2")
+akurasides.1
+
+ssedes.train2<-des.2$SSE
+msedes.train2<-ssedes.train2/length(train.ts)
+sisaandes2<-ramalandes2$residuals
+head(sisaandes2)
+
+mapedes.train2 <- sum(abs(sisaandes2[3:length(train.ts)]/train.ts[3:length(train.ts)])
+                      *100)/length(train.ts)
+
+akurasides.2 <- matrix(c(ssedes.train2,msedes.train2,mapedes.train2))
+row.names(akurasides.2)<- c("SSE", "MSE", "MAPE")
+colnames(akurasides.2) <- c("Akurasi lamda=0.6 dan gamma=0.3")
+akurasides.2
+```
+
+Hasil akurasi dari data latih didapatkan skenario 2 dengan lamda=0.6 dan gamma=0.3 memiliki hasil yang lebih baik. Namun untuk kedua skenario dapat dikategorikan peramalan sangat baik berdasarkan nilai MAPE-nya.
+
+#### Akurasi Data Uji
+
+```{r}
+#Akurasi Data Testing
+selisihdes1<-ramalandes1$mean-testing$`Batubara(USD/ton)`
+selisihdes1
+
+SSEtestingdes1<-sum(selisihdes1^2)
+MSEtestingdes1<-SSEtestingdes1/length(testing$Yt)
+MAPEtestingdes1<-sum(abs(selisihdes1/testing$Yt)*100)/length(testing$Yt)
+
+selisihdes2<-ramalandes2$mean-testing$Yt
+selisihdes2
+
+SSEtestingdes2<-sum(selisihdes2^2)
+MSEtestingdes2<-SSEtestingdes2/length(testing$Yt)
+MAPEtestingdes2<-sum(abs(selisihdes2/testing$Yt)*100)/length(testing$Yt)
+
+selisihdesopt<-ramalandesopt$mean-testing$Yt
+selisihdesopt
+
+SSEtestingdesopt<-sum(selisihdesopt^2)
+MSEtestingdesopt<-SSEtestingdesopt/length(testing$Yt)
+MAPEtestingdesopt<-sum(abs(selisihdesopt/testing$Yt)*100)/length(testing$Yt)
+
+akurasitestingdes <-
+  matrix(c(SSEtestingdes1,MSEtestingdes1,MAPEtestingdes1,SSEtestingdes2,MSEtestingdes2,
+           MAPEtestingdes2,SSEtestingdesopt,MSEtestingdesopt,MAPEtestingdesopt),
+         nrow=3,ncol=3)
+row.names(akurasitestingdes)<- c("SSE", "MSE", "MAPE")
+colnames(akurasitestingdes) <- c("des ske1","des ske2","des opt")
+akurasitestingdes
+```
+
