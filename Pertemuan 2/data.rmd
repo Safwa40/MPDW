@@ -1,1 +1,232 @@
-mmmmm
+
+#Menyiapkan Packages
+```{r}
+library(dplyr)
+library(TTR)
+library(forecast)
+library(lmtest) #digunakan untuk uji formal pendeteksian autokorelasi
+library(orcutt) #untuk membuat model regresi Cochrane-Orcutt
+library(HoRM) #untuk membuat model regresi Hildreth-Lu
+```
+
+
+```{r}
+TS <-meteor$TS
+PS <- meteor$PS
+QV2M <- meteor$QV2M
+T2M <- meteor$T2M
+WS10M_RANGE <- meteor$WS10M_RANGE
+WS10M <- meteor$WS10M
+
+dtpisah <- data.frame(TS, PS, QV2M, T2M, WS10M_RANGE, WS10M)
+```
+
+#Menginput Data
+```{r}
+library(rio)
+meteor <- import("https://raw.githubusercontent.com/Safwa40/MPDW/main/Pertemuan%202/siappakai.csv")
+meteor
+```
+
+#Eksplorasi Data
+```{r}
+#Membentuk objek time series
+meteorts<-ts(meteor$PS)
+meteorts
+
+#Membuat plot time series
+ts.plot(meteorts, xlab="Time Period ", ylab="Tekanan Udara", main= "Time Series Plot of Tekanan Udara")
+points(meteorts)
+```
+#Membuat Model Regresi
+```{r}
+modelmeteor<- lm(TS~PS+QV2M+T2M+WS10M+WS10M_RANGE, data = meteor)
+summary(modelmeteor)
+```
+Berdasarkan uji F hasil didapatkan p-value < 0.05 (alpha) artinya minimal terdapat satu variabel yang berpengaruh nyata terhadap model. Dan uji T didapatkan hasil p-value < 0.05 disemua peubah kecuali QV2M (kelembapan).
+
+#Membuat Plot Sisaan
+```{r}
+#sisaan dan fitted value
+sisaan<- residuals(modelmeteor)
+fitValue<- predict(modelmeteor)
+sisaan
+#Diagnostik dengan eksploratif
+par(mfrow = c(2,2))
+qqnorm(sisaan)
+qqline(sisaan, col = "steelblue", lwd = 2)
+
+plot(fitValue, sisaan, col = "steelblue", pch = 20, xlab = "Sisaan", ylab = "Fitted Values", main = "Sisaan vs Fitted Values")
+abline(a = 0, b = 0, lwd = 2)
+
+hist(sisaan, col = "steelblue")
+
+plot(seq(1,119,1), sisaan, col = "steelblue", pch = 20, xlab = "Sisaan", ylab = "Order", main = "Sisaan vs Order")
+lines(seq(1,119,1), sisaan, col = "red")
+abline(a = 0, b = 0, lwd = 2)
+```
+Kesimpulan yang didapat berdasarkan plot diatas Q-QPlot menunjukan sisaan menyebar tidak normal.  
+
+#Melihat Sisaan Menyebar Normal/Tidak
+H0: sisaan mengikuti sebaran normal
+H1: sisaan tidak mengikuti sebaran normal
+```{r}
+shapiro.test(sisaan)
+ks.test(sisaan, "pnorm", mean=mean(sisaan), sd=sd(sisaan))
+```
+Didapatkan kesimpulan data terima H1 atau sebaran tidak normal
+
+```{r}
+#ACF dan PACF identifikasi autokorelasi
+par(mfrow = c(1,2))
+acf(sisaan)
+pacf(sisaan)
+```
+Didapatkan kesimpulan bahwa data memiliki auto korelasii
+
+```{r}
+#Deteksi autokorelasi dengan uji-Durbin Watson
+#H0: tidak ada autokorelasi
+#H1: ada autokorelasi
+dwtest(modelmeteor)
+```
+P-value < 0.05 (alpha) sehingga dapat dikategorikan adanya autokorelasi positif pada data.
+
+#Penanganan yang akan digunakan menggunakan dua metode, yaitu Cochrane-Orcutt
+Penanganan metode Cochrane-Orcutt dapat dilakukan dengan bantuan packages Orcutt pada aplikasi `R` maupun secara manual. Berikut ini ditampilkan cara menggunakan bantuan `library` *packages* `Orcutt`.
+
+```{r}
+#Penanganan Autokorelasi Cochrane-Orcutt
+modelCO<-cochrane.orcutt(modelmeteor)
+modelCO
+```
+
+Hasil keluaran model setelah dilakukan penanganan adalah sebagai berikut. Hasil juga menunjukkan bahwa nilai DW dan p-value meningkat menjadi 1.85888 dan 0.1832. Hal tersebut juga didukung dengan nilai *p-value* > 0.05, artinya terbukti menyatakan bahwa sisaan terdapat autokorelasi pada taraf nyata 5%. Untuk nilai rho optimum yang digunakan adalah 0.422379. 
+
+# Nilai rho optimum tersebut dapat diketahui dengan *syntax* berikut.
+```{r}
+#Rho optimum
+rho<- modelCO$rho
+rho
+```
+
+# Dilakukan transformasi secara manual dengan syntax berikut ini.
+```{r}
+#Transformasi Manual
+ps.trans<- PS[-1]-PS[-120]*rho
+ts.trans<- TS[-1]-TS[-120]*rho
+ws10mr.trans<- WS10M_RANGE[-1]-WS10M_RANGE[-120]*rho
+qv2m.trans<- QV2M[-1]-QV2M[-120]*rho
+t2m.trans<- T2M[-1]-T2M[-120]*rho
+ws10m.trans<- WS10M[-1]-WS10M[-120]*rho
+```
+
+# Memubuat model regresi baru dengan data yang telah ditransformasi
+```{r}
+modelmeteorCOmanual<- lm(ts.trans~ ps.trans + ws10m.trans + ws10mr.trans + t2m.trans + qv2m.trans)
+summary(modelmeteorCOmanual)
+```
+
+
+# Memerisa Autokorelasi kembali setelah dilakukan transformasi manual
+```{r}
+#Deteksi autokorelasi dengan uji-Durbin Watson
+#H0: tidak ada autokorelasi
+#H1: ada autokorelasi
+dwtest(modelmeteorCOmanual)
+```
+Berdasakan nilai p-Value > 0.05 (alpha) menandakan data sudah memenuhi tidak ada autokorelasi. 
+
+```{r}
+#Mencari Penduga Koefisien Regresi setelah Transformasi ke Persamaan Awal
+b0meteorbintang <- modelmeteorCOmanual$coefficients[-2]
+b0 <- b0meteorbintang/(1-rho)
+b1 <- modelmeteorCOmanual$coefficients[-1]
+b0
+b1
+```
+Koefisien regresi memiliki nilai yang sama dengan hasil perhitungan dengan package diatas.
+
+
+
+#Penanganan yang akan digunakan menggunakan dua metode, yaitu Hildret-Lu
+
+Penanganan kedua adalah menggunakan metode Hildreth-Lu. Metode ini akan mencari nilai SSE terkecil dan dapat dicari secara manual maupun menggunakan packages. Jika menggunakan packages, gunakan `library` *packages* `HORM`.
+
+```{r}
+#Penanganan Autokorelasi Hildreth lu
+# Hildreth-Lu
+hildrethlu.func<- function(r, modelmeteor){
+  x <- model.matrix(modelmeteor)[,-1]
+  y <- model.response(model.frame(modelmeteor))
+  n <- length(y)
+  t <- 2:n
+  y <- y[t]-r*y[t-1]
+  x <- x[t]-r*x[t-1]
+  
+  return(lm(y~x))
+}
+
+#Pencariab rho yang meminimumkan SSE
+rho <- c(seq(0.1,0.9, by= 0.1))
+tabi <- data.frame("rho" = rho, "SSE" = sapply(r, function(i){deviance(hildrethlu.func(i, modelmeteor))}))
+round(tabi, 4)
+```
+
+Pertama-tama akan dicari di mana kira-kira $ρ$ yang menghasilkan SSE minimum. Pada hasil di atas terlihat $ρ$ minimum ketika 0.9. Namun, hasil tersebut masih kurang teliti sehingga akan dicari kembali $ρ$ yang lebih optimum dengan ketelitian yang lebih. Jika sebelumnya jarak antar $ρ$ yang dicari adalah 0.1, kali ini jarak antar $ρ$ adalah 0.001 dan dilakukan pada selang 0.8 sampai dengan 1.
+
+```{r}
+#Rho optimal di sekitar 0.4
+rOpt <- seq(0.8,1, by= 0.001)
+tabOpt <- data.frame("rho" = rOpt, "SSE" = sapply(rOpt, function(i){deviance(hildreth.lu.func(i, modelmeteor))}))
+head(tabOpt[order(tabOpt$SSE),])
+
+#Grafik SSE optimum
+par(mfrow = c(1,1))
+plot(tabi$SSE ~ tab$rho , type = "l", xlab = "Rho", ylab = "SSE")
+abline(v = tabOpt[tabOpt$SSE==min(tabOpt$SSE),"rho"], lty = 2, col="red",lwd=2)
+text(x=0.867, y=1000, labels = "rho=0.867", cex = 0.8)
+```
+
+Perhitungan yang dilakukan aplikasi `R` menunjukkan bahwa nilai $ρ$ optimum, yaitu saat SSE terkecil terdapat pada nilai rho 0.867 . Hal tersebut juga ditunjukkan pada plot. 
+
+Selanjutnya, model dapat didapatkan dengan mengevaluasi nilai $ρ$ ke dalam fungsi `hildreth.lu.func`, serta dilanjutkan dengan pengujian autokorelasi dengan uji Durbin-Watson. Namun, setelah pengecekan tersebut tidak lupa koefisien regresi tersebut digunakan untuk transformasi balik. Persamaan hasil transformasi itulah yang menjadi persamaan sesungguhnya.
+
+```{r}
+#Model terbaik
+modelmeteorHL <- hildreth.lu.func(0.867, modelmeteor)
+modelmeteorHL
+summary(modelmeteorHL)
+
+#Transformasi Balik
+cat("y = ", coef(modelmeteorHL)[1]/(1-0.867), "+", coef(modelmeteorHL)[2],"x", sep = "")
+```
+
+
+```{r}
+#Deteksi autokorelasi
+dwtest(modelmeteorHL)
+```
+Hasil uji Durbin-Watson juga menunjukkan bawah nilai DW sebesar 1.3039 berada pada luar selang daerah tidak ada autokorelasi, yaitu pada rentang DU \< DW \< 4-DU atau 1.71718< DW < 2.28282. Hal tersebut juga didukung oleh *p-value* sebesar 6.571e^-5, di mana *p-value* < 0.05 (alpha). Artinya tolak $H_0$ atau terbukti menyatakan bahwa ada autokorelasi dalam data nilai dengan metode Hildreth-Lu pada taraf nyata 5%.
+
+Terakhir, akan dibandingkan nilai SSE dari ketiga metode (metode awal, metode Cochrane-Orcutt, dan Hildreth-Lu).
+
+```{r}
+#Perbandingan
+sseModelawal <- anova(modelmeteor)$`Sum Sq`[-1]
+sseModelCO <- anova(modelmeteorCOmanual)$`Sum Sq`[-1]
+sseModelHL <- anova(modelmeteorHL)$`Sum Sq`[-1]
+mseModelawal <- sseModelawal/length(n)
+mseModelCO <- sseModelCO/length(n)
+mseModelHL <- sseModelHL/length(n)
+akurasi <- matrix(c(sseModelawal,sseModelCO,sseModelHL,
+                    mseModelawal,mseModelCO,mseModelHL),nrow=2,ncol=3,byrow = T)
+colnames(akurasi) <- c("Model Awal", "Model Cochrane-Orcutt", "Model Hildreth-Lu")
+row.names(akurasi) <- c("SSE","MSE")
+akurasi
+```
+
+Berdasarkan hasil tersebut dapat diketahui bahwa hasil penanganan autokorelasi dengan metode Cochrane-Orcutt dan Hildreth-Lu memiliki SSE yang sangat berbeda, nilai Model Hildreth-Lu lebih baik dibandingkan model awal ketika autokorelasi masih terjadi, yaitu sebesar $0.3286364$.
+
+# Simpulann
+Autokorelasi yang terdapat pada data PS, QV2M, T2M, WS10M, WS10M_RANGE terjadi akibat adanya korelasi di antara unsur penyusunnya. Indikator TS erat hubungannya dengan lingkungan yang sangat rawan menjadi penyebab adanya autokorelasi. Adanya autokorelasi menyebabkan model regresi kurang baik karena akan menigkatkan galatnya. Autokorelasi dapat dideteksi secara eksploratif melalui plot sisaan, ACF, dan PACF, serta dengan uji formal Durbin-Watson. Namun, autokorelasi tersebut dapat ditangani dengan metode Cochrane-Orcutt dan Hildreth-Lu. Dilihat dari nilai SSE, model terbaik ditangani menggunakan Model Hildreth-Lu.
