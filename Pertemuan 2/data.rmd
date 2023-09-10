@@ -82,7 +82,7 @@ par(mfrow = c(1,2))
 acf(sisaan)
 pacf(sisaan)
 ```
-Didapatkan kesimpulan bahwa data memiliki auto korelasi
+Didapatkan kesimpulan bahwa data memiliki auto korelasii
 
 ```{r}
 #Deteksi autokorelasi dengan uji-Durbin Watson
