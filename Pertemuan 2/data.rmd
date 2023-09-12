@@ -226,7 +226,7 @@ row.names(akurasi) <- c("SSE","MSE")
 akurasi
 ```
 Berdasarkan hasil tersebut dapat diketahui bahwa hasil penanganan autokorelasi dengan metode Cochrane-Orcutt dan Hildreth-Lu memiliki SSE yang sangat berbeda, nilai Model Hildreth-Lu lebih baik dibandingkan model awal ketika autokorelasi masih terjadi, yaitu sebesar 2.123611.
-
+aaaaaaaa
 # Simpulann
 Autokorelasi yang terdapat pada data PS, QV2M, T2M, WS10M, WS10M_RANGE terjadi akibat adanya korelasi di antara unsur penyusunnya. Adanya autokorelasi menyebabkan model regresi kurang baik karena akan menigkatkan galatnya. Autokorelasi dapat dideteksi secara eksploratif melalui plot sisaan, ACF, dan PACF, serta dengan uji formal Durbin-Watson. Namun, autokorelasi tersebut dapat ditangani dengan metode Cochrane-Orcutt dan Hildreth-Lu. Dilihat dari nilai SSE, model terbaik ditangani menggunakan Model Hildreth-Lu. Namun, dari uji formal Durbin-Watson penanganan terbaik dengan Cochrane-Orcutt. 
 
