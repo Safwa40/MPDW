@@ -176,7 +176,7 @@ round(tabi, 4)
 Pertama-tama akan dicari di mana kira-kira $ρ$ yang menghasilkan SSE minimum. Pada hasil di atas terlihat $ρ$ minimum ketika 0.9. Namun, hasil tersebut masih kurang teliti sehingga akan dicari kembali $ρ$ yang lebih optimum dengan ketelitian yang lebih. Jika sebelumnya jarak antar $ρ$ yang dicari adalah 0.1, kali ini jarak antar $ρ$ adalah 0.001 dan dilakukan pada selang 0.8 sampai dengan 1.
 
 ```{r}
-#Rho optimal di sekitar 0.4
+#Rho optimal di sekitar 0.9
 rOpt <- seq(0.8,1, by= 0.001)
 tabOpt <- data.frame("rho" = rOpt, "SSE" = sapply(rOpt, function(i){deviance(hildrethlu.func(i, modelmeteor))}))
 head(tabOpt[order(tabOpt$SSE),])
