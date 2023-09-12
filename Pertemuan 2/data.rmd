@@ -24,7 +24,7 @@ dtpisah <- data.frame(TS, PS, QV2M, T2M, WS10M_RANGE, WS10M)
 #Menginput Data
 ```{r}
 library(rio)
-meteor <- import("https://raw.githubusercontent.com/Safwa40/MPDW/main/Pertemuan%202/siappakai.csv")
+meteor <- import("https://raw.githubusercontent.com/Safwa40/MPDW/main/Pertemuan%202/Cape.csv")
 meteor
 ```
 
