@@ -396,4 +396,4 @@ model.ardlDlmberganda2 = ardlDlm(formula = logprice ~ interest + logm1,
 summary(model.ardlDlmberganda2)
 ```
 
-Proses selanjutnya sama dengan pemodelan menggunakan peubah tunggal.
+Proses selanjutnya sama dengan pemodelan menggunakan peubah tunggal. Kok gak ada perubahan apa apa sih
