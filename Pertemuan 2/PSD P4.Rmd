@@ -1,0 +1,241 @@
+
+#Memasukkan Packages
+```{r}
+lapply(c("car","lmtest"),library,character.only=T)[[1]]
+library(dplyr)
+library(kSamples)
+
+```
+#Import Data
+```{r}
+mobil <-read.csv("D:/FIRA/Local Disk/HALO/SEMESTA 5/PSD (Pengantar Sains Data)/finale.csv")
+mobil
+summary(mobil)
+```
+
+```{r}
+mobil$Lahir<-as.factor(mobil$TahunKeluaran)
+mobil$Hpromo<-as.numeric(mobil$hargaPromo..juta.rupiah.)
+mobil$Merek<-as.factor(mobil$Merek)
+mobil$Jarakt<-(mobil$jarakTempuh..ribu.km.)
+mobil$Diskon<-(mobil$Diskon)
+mobil$Harga<-(mobil$harga..juta.rupiah.)
+mobil
+```
+
+```{r}
+car<-mobil%>%mutate(Merek = relevel(mobil$Merek, ref = "Honda"));car$Merek;car$Lahir;
+```
+
+```{r}
+model<-lm(Harga~Merek+Lahir+Diskon+Hpromo+Jarakt,car);model;summary(model)
+```
+
+```{r}
+avPlots(model)
+```
+
+```{r}
+uji.normal<-function(x, object.name="x", graph=TRUE, graph.transformed=TRUE){
+  lapply(c("fitdistrplus", "kSamples", "rcompanion"), library, character.only=T) 
+  if(any(x<0))x<-x-min(x)+1
+  mean <- fitdist(x, "norm")$estimate[1]; sd <- fitdist(x, "norm")$estimate[2]
+  uji<-ks.test(x, "pnorm", mean=mean, sd=sd)
+  uji1<- ad.test(x, rnorm(length(x), mean=mean, sd=sd))
+  pvalue<-uji$p.value
+  PVALUE1<-uji1$ad[1,3]
+  PVALUE2<-uji1$ad[2,3]
+  t<-transformTukey(x,quiet = TRUE,plotit = FALSE)
+  pt<-ks.test(t, "pnorm", mean=fitdist(t,"norm")$estimate[1], 
+              sd=fitdist(t,"norm")$estimate[2])$p.value
+  lambda<-transformTukey(x,returnLambda =TRUE,quiet=TRUE,plotit = FALSE)
+  if(graph==TRUE){
+    if(graph.transformed==FALSE){
+      par(mfrow=c(1,2))
+      hist(x, freq=F, col="steelblue", border="white", 
+           main=paste("Histogram of ",object.name),xlab=object.name)
+      lines(density(x),lwd=2, col="coral")
+      qqnorm(x,col="coral");qqline(x,col="steelblue",lwd=2)
+    }
+    else{
+      par(mfrow=c(2,2))
+      hist(x, freq=F, col="steelblue", border="white", 
+           main=paste("Histogram of ",object.name),xlab=object.name)
+      lines(density(x),lwd=2, col="coral")
+      hist(t, main=paste("Histogram of ",object.name,"transformed"), 
+           xlab=paste(object.name,"transformed"), freq=F, 
+           col="steelblue",border = "white")
+      lines(density(t),lwd=2, col="coral")
+      qqnorm(x,col="coral");qqline(x,col="steelblue",lwd=2)
+      qqnorm(t, col="coral");qqline(t,col="steelblue", lwd=2)
+    }
+  }
+  z<-ifelse((PVALUE1>=0.05 & PVALUE2<0.05 ||PVALUE1<0.05 & PVALUE2>=0.05), 
+            
+            ifelse(pvalue>=0.05, 
+                   return(`Hasil Uji Kolmogorov Smirnov`=data.frame(`P-Value`=pvalue,
+                            Keputusan="Terima H0, data menyebar normal")), 
+                   return(list(`Hasil Uji Kolmogorov Smirnov`=data.frame(`P-Value`=pvalue,
+                                 Keputusan="Tolak H0, data tidak menyebar normal"),
+                                 `lambda transformasi`=lambda,
+                                 `Data Hasil Transformasi Tukey`= t,
+                                `Setelah transformasi~Uji Kolmogorov-Smirnov`=data.frame(`P-Value`=pt, 
+                                  `Keputusan`=ifelse(pt>=0.05, 
+                                  "Terima H0, data menyebar normal", 
+                                  "Tolak H0, data tidak menyebar normal"))))),
+            
+            ifelse(((pvalue >= 0.05)&(PVALUE1 >= 0.05||PVALUE2>= 0.05)), 
+                   return(list(`Hasil Uji Kolmogorov Smirnov`=data.frame(`P-Value`=pvalue,
+                                 Keputusan="Terima H0, data menyebar normal"), 
+                                 `Hasil Uji Anderson`=
+                                 data.frame(`P-Value`=
+                                rbind(`Versi 1`=PVALUE1, `Versi 2`=PVALUE2),
+                                Keputusan=rep("Terima H0, data menyebar normal", 2)))), 
+                   
+                   ifelse((pvalue >= 0.05&(PVALUE1 < 0.05||PVALUE2 < 0.05)),
+                          return(list(`Hasil Uji Kolmogorov Smirnov`= data.frame(`P-Value`=pvalue,
+                                        Keputusan="Terima H0, data menyebar normal"), 
+                                      `Hasil Uji Anderson`=data.frame(`P-Value`=
+                                        rbind(`Versi 1`=PVALUE1,`Versi 2`=PVALUE2), 
+                                        Keputusan= rep("Tolak H0, data tidak menyebar normal",2)), 
+                                        `lambda transformasi`=lambda,
+                                        `Data Hasil Transformasi Tukey`= t,
+                                        `Setelah transformasi~Uji Kolmogorov-Smirnov`=
+                                        data.frame(`P-Value`=pt, 
+                                        `Keputusan`=ifelse(pt>=0.05, 
+                                            "Terima H0, data menyebar normal",
+                                            "Tolak H0, data tidak menyebar normal")))),
+                          
+                          ifelse(pvalue < 0.05&(PVALUE1 >= 0.05||PVALUE2 >= 0.05),
+                                 return(list(`Hasil Uji Kolmogorov Smirnov`=data.frame(`P-Value`=pvalue,
+                                  Keputusan="Tolak H0, data tidak menyebar normal"), 
+                                  `Hasil Uji Anderson`=data.frame(`P-Value`= rbind(`Versi 1`=PVALUE1,`Versi 2`=PVALUE2), 
+                                    Keputusan=rep("Terima H0, data menyebar normal",2)),
+                                  `lambda transformasi`=lambda,
+                                  `Data Hasil Transformasi Tukey`= t,
+                                  `Setelah transformasi~Uji Kolmogorov-Smirnov`=data.frame(`P-Value`=pt, 
+                                  `Keputusan`=ifelse(pt>=0.05, 
+                                  "Terima H0, data menyebar normal", 
+                                  "Tolak H0, data tidak menyebar normal")))),
+                                 
+                                 return(list(`Hasil Uji Kolmogorov Smirnov`=data.frame(`P-Value`=pvalue,
+                                               Keputusan="Tolak H0, data tidak menyebar normal"),
+                                               `Hasil Uji Anderson`=data.frame(`P-Value`=rbind(`Versi 1`=PVALUE1,
+                                                    `Versi 2`=PVALUE2), 
+                                                                                                                                                                          Keputusan=rep("Tolak H0, data tidak menyebar normal",2)), 
+                                             `lambda transformasi`=lambda,
+                                             `Data Hasil Transformasi Tukey`= t,
+                                             `Setelah transformasi~Uji Kolmogorov-Smirnov`=data.frame(`P-Value`=pt,
+                                              `Keputusan`=ifelse(pt>=0.05, 
+                                              "Terima H0, data menyebar normal", 
+                                              "Tolak H0, data tidak menyebar normal"))))))))
+  return(z)
+}
+
+uji.normal1<-function(x, object.name="x", graph=TRUE, graph.transformed=TRUE){
+  lapply(c("fitdistrplus", "kSamples", "rcompanion"), library, character.only=T) 
+  if(any(x<0))x<-x-min(x)+1
+  mean <- mean(x); sd <- sd(x)
+  uji<-ks.test(x, "pnorm", mean=mean, sd=sd)
+  uji1<- ad.test(x, rnorm(length(x), mean=mean, sd=sd))
+  pvalue<-uji$p.value
+  PVALUE1<-uji1$ad[1,3]
+  PVALUE2<-uji1$ad[2,3]
+  t<-transformTukey(x,quiet = TRUE,plotit = FALSE)
+  pt<-ks.test(t, "pnorm", mean=mean(t), 
+              sd=sd(t))$p.value
+  lambda<-transformTukey(x,returnLambda =TRUE,quiet=TRUE,plotit = FALSE)
+  if(graph==TRUE){
+    if(graph.transformed==FALSE){
+      par(mfrow=c(1,2))
+      hist(x, freq=F, col="steelblue", border="white", 
+           main=paste("Histogram of ",object.name),xlab=object.name)
+      lines(density(x),lwd=2, col="coral")
+      qqnorm(x,col="coral");qqline(x,col="steelblue",lwd=2)
+    }
+    else{
+      par(mfrow=c(2,2))
+      hist(x, freq=F, col="steelblue", border="white", 
+           main=paste("Histogram of ",object.name),xlab=object.name)
+      lines(density(x),lwd=2, col="coral")
+      hist(t, main=paste("Histogram of ",object.name,"transformed"), 
+           xlab=paste(object.name,"transformed"), freq=F, 
+           col="steelblue",border = "white")
+      lines(density(t),lwd=2, col="coral")
+      qqnorm(x,col="coral");qqline(x,col="steelblue",lwd=2)
+      qqnorm(t, col="coral");qqline(t,col="steelblue", lwd=2)
+    }
+  }
+  z<-ifelse((PVALUE1>=0.05 & PVALUE2<0.05 ||PVALUE1<0.05 & PVALUE2>=0.05), 
+            
+            ifelse(pvalue>=0.05, 
+                   return(`Hasil Uji Kolmogorov Smirnov`=data.frame(`P-Value`=pvalue,
+                                                                    Keputusan="Terima H0, data menyebar normal")), 
+                   return(list(`Hasil Uji Kolmogorov Smirnov`=data.frame(`P-Value`=pvalue,
+                                                                         Keputusan="Tolak H0, data tidak menyebar normal"),
+                               `lambda transformasi`=lambda,
+                               `Data Hasil Transformasi Tukey`= t,
+                               `Setelah transformasi~Uji Kolmogorov-Smirnov`=data.frame(`P-Value`=pt, 
+                                                                                        `Keputusan`=ifelse(pt>=0.05, 
+                                                                                                           "Terima H0, data menyebar normal", 
+                                                                                                           "Tolak H0, data tidak menyebar normal"))))),
+            
+            ifelse(((pvalue >= 0.05)&(PVALUE1 >= 0.05||PVALUE2>= 0.05)), 
+                   return(list(`Hasil Uji Kolmogorov Smirnov`=data.frame(`P-Value`=pvalue,
+                                                                         Keputusan="Terima H0, data menyebar normal"), 
+                               `Hasil Uji Anderson`=
+                                 data.frame(`P-Value`=
+                                              rbind(`Versi 1`=PVALUE1, `Versi 2`=PVALUE2),
+                                            Keputusan=rep("Terima H0, data menyebar normal", 2)))), 
+                   
+                   ifelse((pvalue >= 0.05&(PVALUE1 < 0.05||PVALUE2 < 0.05)),
+                          return(list(`Hasil Uji Kolmogorov Smirnov`= data.frame(`P-Value`=pvalue,
+                                                                                 Keputusan="Terima H0, data menyebar normal"), 
+                                      `Hasil Uji Anderson`=data.frame(`P-Value`=
+                                                                        rbind(`Versi 1`=PVALUE1,`Versi 2`=PVALUE2), 
+                                                                      Keputusan= rep("Tolak H0, data tidak menyebar normal",2)), 
+                                      `lambda transformasi`=lambda,
+                                      `Data Hasil Transformasi Tukey`= t,
+                                      `Setelah transformasi~Uji Kolmogorov-Smirnov`=
+                                        data.frame(`P-Value`=pt, 
+                                                   `Keputusan`=ifelse(pt>=0.05, 
+                                                                      "Terima H0, data menyebar normal",
+                                                                      "Tolak H0, data tidak menyebar normal")))),
+                          
+                          ifelse(pvalue < 0.05&(PVALUE1 >= 0.05||PVALUE2 >= 0.05),
+                                 return(list(`Hasil Uji Kolmogorov Smirnov`=data.frame(`P-Value`=pvalue,
+                                                                                       Keputusan="Tolak H0, data tidak menyebar normal"), 
+                                             `Hasil Uji Anderson`=data.frame(`P-Value`= rbind(`Versi 1`=PVALUE1,`Versi 2`=PVALUE2), 
+                                                                             Keputusan=rep("Terima H0, data menyebar normal",2)),
+                                             `lambda transformasi`=lambda,
+                                             `Data Hasil Transformasi Tukey`= t,
+                                             `Setelah transformasi~Uji Kolmogorov-Smirnov`=data.frame(`P-Value`=pt, 
+                                                                                                      `Keputusan`=ifelse(pt>=0.05, 
+                                                                                                                         "Terima H0, data menyebar normal", 
+                                                                                                                         "Tolak H0, data tidak menyebar normal")))),
+                                 
+                                 return(list(`Hasil Uji Kolmogorov Smirnov`=data.frame(`P-Value`=pvalue,
+                                                                                       Keputusan="Tolak H0, data tidak menyebar normal"),
+                                             `Hasil Uji Anderson`=data.frame(`P-Value`=rbind(`Versi 1`=PVALUE1,
+                                                                                             `Versi 2`=PVALUE2), 
+                                                                             Keputusan=rep("Tolak H0, data tidak menyebar normal",2)), 
+                                             `lambda transformasi`=lambda,
+                                             `Data Hasil Transformasi Tukey`= t,
+                                             `Setelah transformasi~Uji Kolmogorov-Smirnov`=data.frame(`P-Value`=pt,
+                                                                                                      `Keputusan`=ifelse(pt>=0.05, 
+                                                                                                                         "Terima H0, data menyebar normal", 
+                                                                                                                         "Tolak H0, data tidak menyebar normal"))))))))
+  return(z)
+}
+```
+
+```{r}
+uji.normal(model$residuals,"residuals",graph.transformed = F)
+```
+```{r}
+par(mfrow=c(1,2));plot(model,c(1,3))
+```
+```{r}
+gqtest(model);bgtest(model)
+```
+
