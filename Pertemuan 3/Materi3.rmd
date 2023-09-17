@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 ---
 title: "Pertemuan 3 - Regresi dengan Peubah Lag"
 author:
@@ -398,3 +399,6 @@ summary(model.ardlDlmberganda2)
 ```
 
 Proses selanjutnya sama dengan pemodelan menggunakan peubah tunggal.
+=======
+
+>>>>>>> eb995742ea0658f158408b61fdf0d58449160ea8

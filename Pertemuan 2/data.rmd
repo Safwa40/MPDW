@@ -24,7 +24,11 @@ dtpisah <- data.frame(TS, PS, QV2M, T2M, WS10M_RANGE, WS10M)
 #Menginput Data
 ```{r}
 library(rio)
+<<<<<<< HEAD
 meteor <- import("https://raw.githubusercontent.com/Safwa40/MPDW/main/Pertemuan%202/Cape.csv")
+=======
+meteor <- import("https://raw.githubusercontent.com/Safwa40/MPDW/main/Pertemuan%202/siappakai.csv")
+>>>>>>> eb995742ea0658f158408b61fdf0d58449160ea8
 meteor
 ```
 
@@ -230,4 +234,7 @@ Berdasarkan hasil tersebut dapat diketahui bahwa hasil penanganan autokorelasi d
 # Simpulann
 Autokorelasi yang terdapat pada data PS, QV2M, T2M, WS10M, WS10M_RANGE terjadi akibat adanya korelasi di antara unsur penyusunnya. Adanya autokorelasi menyebabkan model regresi kurang baik karena akan menigkatkan galatnya. Autokorelasi dapat dideteksi secara eksploratif melalui plot sisaan, ACF, dan PACF, serta dengan uji formal Durbin-Watson. Namun, autokorelasi tersebut dapat ditangani dengan metode Cochrane-Orcutt dan Hildreth-Lu. Dilihat dari nilai SSE, model terbaik ditangani menggunakan Model Hildreth-Lu. Namun, dari uji formal Durbin-Watson penanganan terbaik dengan Cochrane-Orcutt. 
 
+<<<<<<< HEAD
 kenapa error mulu woy
+=======
+>>>>>>> eb995742ea0658f158408b61fdf0d58449160ea8
