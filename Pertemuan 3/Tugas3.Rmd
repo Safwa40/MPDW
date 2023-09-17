@@ -296,5 +296,3 @@ legend("topleft",c("aktual", "koyck","DLM 1","DLM 2", "autoregressive"), lty=1, 
 ```
 
 Berdasarkan plot tersebut, terlihat bahwa plot yang paling mendekati data aktualnya adalah semua model kecuali Model koyck, sehingga dapat disimpulkan model terbaik dalam hal ini adalah DLM1, DLM2, dan autoregressive. 
-
-manaaa kok gk adaa sihhhh file yg iniiii
