@@ -5,27 +5,9 @@ date: "2023-09-17"
 output: html_document
 ---
 
----
-title: "Pertemuan 3 - Regresi dengan Peubah Lag"
-author:
-- Adelia Putri Pangestika
-- Muhammad Rizky Nurhambali
-output:
-  html_document:
-    theme: yeti
-    toc: true
-    toc_float: true
-  word_document: default
-  pdf_document: default
----
-
 ## *Packages*
 
-```{r, echo=FALSE}
-#PACKAGES
-#install.packages("dLagM") #install jika belum ada
-#install.packages("dynlm") #install jika belum ada
-#install.packages("MLmetrics") #install jika belum ada
+```{r}
 library(dLagM)
 library(dynlm)
 library(MLmetrics)
@@ -36,192 +18,157 @@ library(car)
 ## Impor Data
 
 ```{r}
-meteor <- rio::import("https://raw.githubusercontent.com/Safwa40/MPDW/main/Pertemuan%202/Cape.csv")
-str(meteor)
-meteor
+meteor1 <- rio::import("https://raw.githubusercontent.com/Safwa40/MPDW/main/Pertemuan%203/Bisayuk.csv")
+str(meteor1)
+meteor1
 ```
 
 ## Pembagian Data
 
 ```{r}
 #SPLIT DATA
-train<-meteor[1:15,]
-test<-meteor[16:20,]
+trainmeteor<-meteor1[1:90,]
+testmeteor<-meteor1[91:120,]
+trainmeteor
 ```
 
 ```{r}
 #data time series
-train.ts<-ts(train)
-test.ts<-ts(test)
-data.ts<-ts(data)
+trainmeteor.ts<-ts(trainmeteor)
+testmeteor.ts<-ts(testmeteor)
+meteor.ts<-ts(meteor1)
 ```
 
-## Model Koyck
-
-Model Koyck didasarkan pada asumsi bahwa semakin jauh jarak lag peubah independen dari periode sekarang maka semakin kecil pengaruh peubah lag terhadap peubah dependen.
-
-Koyck mengusulkan suatu metode untuk menduga model dinamis distributed lag dengan mengasumsikan bahwa semua koefisien $\beta$ mempunyai tanda sama.
-
-Model kyock merupakan jenis paling umum dari model infinite distributed lag dan juga dikenal sebagai geometric lag
-
-$$
-y_t=a(1-\lambda)+\beta_0X_t+\beta_1Z_t+\lambda Y_{t-1}+V_t
-$$
-
-dengan $$V_t=u_t-\lambda u_{t-1}$$
-
-### Pemodelan
-
-Pemodelan model Koyck dengan `R` dapat menggunakan `dLagM::koyckDlm()` . Fungsi umum dari `koyckDlm` adalah sebagai berikut.
-
-```{r, eval=FALSE, message = FALSE, warning=FALSE, error=FALSE}
-koyckDlm(x , y , intercept)
-```
-
-Fungsi `koyckDlm()` akan menerapkan model lag terdistribusi dengan transformasi Koyck satu prediktor. Nilai `x` dan `y` tidak perlu sebagai objek *time series* (`ts`). `intercept` dapat dibuat `TRUE` untuk memasukkan intersep ke dalam model.
 
 ```{r}
 #MODEL KOYCK
-model.koyck <- koyckDlm(x = train$Xt, y = train$Yt)
-summary(model.koyck)
-AIC(model.koyck)
-BIC(model.koyck)
+modelkoyck <- dLagM::koyckDlm(x = trainmeteor$T2M, y = trainmeteor$TS, TRUE)
+summary(modelkoyck)
+AIC(modelkoyck)
+BIC(modelkoyck)
 ```
 
 Dari hasil tersebut, didapat bahwa peubah $x_t$ dan $y_{t-1}$ memiliki nilai $P-Value<0.05$. Hal ini menunjukkan bahwa peubah $x_t$ dan $y_{t-1}$ berpengaruh signifikan terhadap $y$. Adapun model keseluruhannya adalah sebagai berikut
 
 $$
-\hat{Y_t}=-3.7335+1.1510X_t+0.4214Y_{t-1}
+\hat{Y_t}=0.3850+0.7477X_t+0.2091Y_{t-1}
 $$
 
 ### Peramalan dan Akurasi
 
-Berikut adalah hasil peramalan y untuk 5 periode kedepan menggunakan model koyck
+Berikut adalah hasil peramalan y untuk 30 periode kedepan menggunakan model koyck
 
 ```{r}
-fore.koyck <- forecast(model = model.koyck, x=test$Xt, h=5)
-fore.koyck
-mape.koyck <- MAPE(fore.koyck$forecasts, test$Yt)
+forekoyck <- forecast(model = modelkoyck, x=testmeteor$T2M, h=30)
+forekoyck
+mapekoyck <- MAPE(forekoyck$forecasts, testmeteor$TS)
+mapekoyck
+is.na(testmeteor$TS)
 #akurasi data training
-GoF(model.koyck)
+GoF(modelkoyck)
 ```
 
 ## Regression with Distributed Lag
-
-Pemodelan model Regression with Distributed Lag dengan `R` dapat menggunakan `dLagM::dlm()` . Fungsi umum dari `dlm` adalah sebagai berikut.
-
-```{r, eval=FALSE, error=FALSE}
-dlm(formula , data , x , y , q , remove )
-```
-
-Fungsi `dlm()` akan menerapkan model lag terdistribusi dengan satu atau lebih prediktor. Nilai `x` dan `y` tidak perlu sebagai objek *time series* (`ts`). $q$ adalah integer yang mewakili panjang *lag* yang terbatas.
-
 ### Pemodelan (Lag=2)
 
 ```{r}
-model.dlm <- dlm(x = train$Xt,y = train$Yt , q = 2)
-summary(model.dlm)
-AIC(model.dlm)
-BIC(model.dlm)
+modeldlm <- dlm(x = trainmeteor$T2M,y = trainmeteor$TS , q = 2)
+summary(modeldlm)
+AIC(modeldlm)
+BIC(modeldlm)
 ```
 
-Dari hasil diatas, didapat bahwa $P-value$ dari intercept dan $x_{t-1}<0.05$. Hal ini menunjukkan bahwa intercept dan $x_{t-1}$ berpengaruh signifikan terhadap $y$. Adapun model keseluruhan yang terbentuk adalah sebagai berikut
+Dari hasil diatas, didapat bahwa $P-value$ dari intercept dan $x_{t}<0.05$. Hal ini menunjukkan bahwa intercept dan $x_{t1}$ berpengaruh signifikan terhadap $y$. Adapun model keseluruhan yang terbentuk adalah sebagai berikut
 
 $$
-\hat{Y_t}=-9.6779+0.3179X_t+1.5276X_{t-1}+0.2651X_{t-2}
+\hat{Y_t}=-0.350319+0.997494X_t+0.007320X_{t-1}+0.007216X_{t-2}
 $$
 
 ### Peramalan dan Akurasi
 
-Berikut merupakan hasil peramalan $y$ untuk 5 periode kedepan
+Berikut merupakan hasil peramalan $y$ untuk 30 periode kedepan
 
 ```{r}
-fore.dlm <- forecast(model = model.dlm, x=test$Xt, h=5)
-fore.dlm
-mape.dlm <- MAPE(fore.dlm$forecasts, test$Yt)
+foredlm <- forecast(model = modeldlm, x=testmeteor$T2M, h=30)
+foredlm
+mapedlm <- MAPE(foredlm$forecasts, testmeteor$TS)
 #akurasi data training
-GoF(model.dlm)
+GoF(modeldlm)
 ```
 
 ### *Lag* Optimum
 
 ```{r}
 #penentuan lag optimum 
-finiteDLMauto(formula = Yt ~ Xt,
-              data = data.frame(train), q.min = 1, q.max = 6,
+finiteDLMauto(formula = TS ~ T2M,
+              data = data.frame(trainmeteor), q.min = 1, q.max = 10,
               model.type = "dlm", error.type = "AIC", trace = FALSE)
 ```
 
-Berdasarkan output tersebut, lag optimum didapatkan ketika lag=6. Selanjutnya dilakukan pemodelan untuk lag=6
+Berdasarkan output tersebut, lag optimum didapatkan ketika lag=7. Selanjutnya dilakukan pemodelan untuk lag=7
 
 ```{r}
 #model dlm dengan lag optimum
-model.dlm2 <- dlm(x = train$Xt,y = train$Yt , q = 6)
-summary(model.dlm2)
-AIC(model.dlm2)
-BIC(model.dlm2)
+modeldlm2 <- dlm(x = trainmeteor$T2M,y = trainmeteor$TS , q = 7)
+summary(modeldlm2)
+AIC(modeldlm2)
+BIC(modeldlm2)
 ```
 
-Dari hasil tersebut terdapat beberapa peubah yang berpengaruh signifikan terhadap taraf nyata 5% yaitu $x_t$ , $x_{t-2}$ , $x_{t-4}$ , $x_{t-6}$. Adapun keseluruhan model yang terbentuk adalah
+Dari hasil tersebut hanya terdapat 1 peubah yang berpengaruh signifikan terhadap taraf nyata 5% yaitu $x_t$. Adapun keseluruhan model yang terbentuk adalah
 
-$$
-\hat{Y_t}=21.42223+1.68749X_t+...-3.47612X_{t-6}
-$$
+$$-0.0033804
+\hat{Y_t}=-0.2921043+0.9849108X_t+...-0.0033804x_7$$
 
-Adapun hasil peramalan 5 periode kedepan menggunakan model tersebut adalah sebagai berikut
+Adapun hasil peramalan 30 periode kedepan menggunakan model tersebut adalah sebagai berikut
 
 ```{r}
 #peramalan dan akurasi
-fore.dlm2 <- forecast(model = model.dlm2, x=test$Xt, h=5)
-mape.dlm2<- MAPE(fore.dlm2$forecasts, test$Yt)
+foredlm2 <- forecast(model = modeldlm2, x=testmeteor$T2M, h=30)
+mapedlm2<- MAPE(foredlm2$forecasts, testmeteor$TS)
+mapedlm2
 #akurasi data training
-GoF(model.dlm2)
+GoF(modeldlm2)
 ```
 
-Model tersebut merupakan model yang sangat baik dengan nilai MAPE yang kurang dari 10%.
+Model tersebut merupakan model yang sangat baik dengan nilai MAPE yang kurang dari 5%.
 
 ## Model Autoregressive
 
 Peubah dependen dipengaruhi oleh peubah independen pada waktu sekarang, serta dipengaruhi juga oleh peubah dependen itu sendiri pada satu waktu yang lalu maka model tersebut disebut *autoregressive* (Gujarati 2004).
 
+
 ### Pemodelan
-
-Pemodelan Autoregressive dilakukan menggunakan fungsi `dLagM::ardlDlm()` . Fungsi tersebut akan menerapkan *autoregressive* berordo $(p,q)$ dengan satu prediktor. Fungsi umum dari `ardlDlm()` adalah sebagai berikut.
-
-```{r, eval=FALSE}
-ardlDlm(formula = NULL , data = NULL , x = NULL , y = NULL , p = 1 , q = 1 , 
-         remove = NULL )
-```
 
 Dengan $p$ adalah integer yang mewakili panjang *lag* yang terbatas dan $q$ adalah integer yang merepresentasikan ordo dari proses *autoregressive*.
 
 ```{r}
-model.ardl <- ardlDlm(x = train$Xt, y = train$Yt, p = 1 , q = 1)
-summary(model.ardl)
-AIC(model.ardl)
-BIC(model.ardl)
+modelardl <- ardlDlm(x = trainmeteor$T2M, y = trainmeteor$TS, p = 1 , q = 1)
+summary(modelardl)
+AIC(modelardl)
+BIC(modelardl)
 ```
 
-Hasil di atas menunjukkan bahwa selain peubah $x_{t-1}$, hasil uji t menunjukkan nilai-p pada peubah $\ge0.05$ Hal ini menunjukkan bahwa peubah $x_{t-1}$ berpengaruh signifikan terhadap $y_t$, sementara $x_t$ dan $y_{t-1}$ berpengaruh signifikan terhadap $y_t$. Model keseluruhannya adalah sebagai berikut:
+Hasil di atas menunjukkan bahwa semua peubah, hasil uji t menunjukkan nilai-p pada peubah $<0.05$ Hal ini menunjukkan bahwa peubah semuanya berpengaruh signifikan terhadap $y_t$. Model keseluruhannya adalah sebagai berikut:
 
 $$
-\hat{Y}=-8,3594+0,3563X_t+1,4557X_{t-1}+0,1408Y_{t-1}
+\hat{Y}=-0.20625+1.00195X_t-0.48272X_{t-1}+0.48927Y_{t-1}
 $$
 
 ### Peramalan dan Akurasi
 
 ```{r}
-fore.ardl <- forecast(model = model.ardl, x=test$Xt, h=5)
-fore.ardl
+foreardl <- forecast(model = modelardl, x=testmeteor$T2M, h=30)
+foreardl
 ```
 
 Data di atas merupakan hasil peramalan untuk 5 periode ke depan menggunakan Model Autoregressive dengan $p=1$ dan $q=1$.
 
 ```{r}
-mape.ardl <- MAPE(fore.ardl$forecasts, test$Yt)
-mape.ardl
+mapeardl <- MAPE(foreardl$forecasts, testmeteor$TS)
+mapeardl
 #akurasi data training
-GoF(model.ardl)
+GoF(modelardl)
 ```
 
 Berdasarkan akurasi di atas, terlihat bahwa nilai MAPE keduanya tidak jauh berbeda. Artinya, model regresi dengan distribusi lag ini tidak `overfitted` atau `underfitted`
@@ -230,8 +177,8 @@ Berdasarkan akurasi di atas, terlihat bahwa nilai MAPE keduanya tidak jauh berbe
 
 ```{r}
 #penentuan lag optimum
-model.ardl.opt <- ardlBoundOrders(data = data.frame(data), ic = "AIC", 
-                                  formula = Yt ~ Xt )
+model.ardl.opt <- ardlBoundOrders(data = data.frame(meteor1), ic = "AIC", 
+                                  formula = TS ~ T2M )
 min_p=c()
 for(i in 1:6){
   min_p[i]=min(model.ardl.opt$Stat.table[[i]])
@@ -243,31 +190,23 @@ data.frame("q_optimum" = q_opt, "p_optimum" = p_opt,
            "AIC"=model.ardl.opt$min.Stat)
 ```
 
-Dari tabel di atas, dapat terlihat bahwa nilai AIC terendah didapat ketika $p=6$ dan $q=1$, yaitu sebesar `-20,56587`. Artinya, model autoregressive optimum didapat ketika $p=6$ dan $q=1$.
+Dari tabel di atas, dapat terlihat bahwa nilai AIC terendah didapat ketika $p=12$ dan $q=1$, yaitu sebesar `11.7474`. Artinya, model autoregressive optimum didapat ketika $p=12$ dan $q=1$.
 
 Selanjutnya dapat dilakukan pemodelan dengan nilai $p$ dan $q$ optimum seperti inisialisasi di langkah sebelumnya.
 
 ## Pemodelan DLM & ARDL dengan Library `dynlm`
 
-Pemodelan regresi dengan peubah *lag* tidak hanya dapat dilakukan dengan fungsi pada *packages* `dLagM` , tetapi terdapat *packages* `dynlm` yang dapat digunakan. Fungsi `dynlm` secara umum adalah sebagai berikut.
-
-```{r, eval=FALSE}
-dynlm(formula, data, subset, weights, na.action, method = "qr",
-  model = TRUE, x = FALSE, y = FALSE, qr = TRUE, singular.ok = TRUE,
-  contrasts = NULL, offset, start = NULL, end = NULL, ...)
-```
-
 Untuk menentukan `formula` model yang akan digunakan, tersedia fungsi tambahan yang memungkinkan spesifikasi dinamika (melalui `d()` dan `L()`) atau pola linier/siklus dengan mudah (melalui `trend()`, `season()`, dan `harmon()`). Semua fungsi formula baru mengharuskan argumennya berupa objek deret waktu (yaitu, `"ts"` atau `"zoo"`).
 
 ```{r}
 #sama dengan model dlm q=1
-cons_lm1 <- dynlm(Yt ~ Xt+L(Xt),data = train.ts)
+cons_lm1 <- dynlm(TS ~ T2M+L(T2M),data = trainmeteor.ts)
 #sama dengan model ardl p=1 q=0
-cons_lm2 <- dynlm(Yt ~ Xt+L(Yt),data = train.ts)
+cons_lm2 <- dynlm(TS ~ T2M+L(TS),data = trainmeteor.ts)
 #sama dengan ardl p=1 q=1
-cons_lm3 <- dynlm(Yt ~ Xt+L(Xt)+L(Yt),data = train.ts)
+cons_lm3 <- dynlm(TS ~ T2M+L(T2M)+L(TS),data = trainmeteor.ts)
 #sama dengan dlm p=2
-cons_lm4 <- dynlm(Yt ~ Xt+L(Xt)+L(Xt,2),data = train.ts)
+cons_lm4 <- dynlm(TS ~ T2M+L(T2M)+L(T2M,2),data = trainmeteor.ts)
 ```
 
 ### Ringkasan Model
@@ -326,81 +265,34 @@ shapiro.test(residuals(cons_lm4))
 ## Perbandingan Model
 
 ```{r}
-akurasi <- matrix(c(mape.koyck, mape.dlm, mape.dlm2, mape.ardl))
+akurasi <- matrix(c(mapekoyck, mapedlm, mapedlm2, mapeardl))
 row.names(akurasi)<- c("Koyck","DLM 1","DLM 2","Autoregressive")
 colnames(akurasi) <- c("MAPE")
 akurasi
 ```
 
-Berdasarkan nilai MAPE, model paling optimum didapat pada Model Koyck karena memiliki nilai MAPE yang terkecil.
+Berdasarkan nilai MAPE, model paling optimum didapat pada Model Koyck karena memiliki nilai MAPE yang terbesar.
 
 ### Plot
 
 ```{r}
-par(mfrow=c(1,1))
-plot(test$Xt, test$Yt, type="b", col="black", ylim=c(120,250))
-points(test$Xt, fore.koyck$forecasts,col="red")
-lines(test$Xt, fore.koyck$forecasts,col="red")
-points(test$Xt, fore.dlm$forecasts,col="blue")
-lines(test$Xt, fore.dlm$forecasts,col="blue")
-points(test$Xt, fore.dlm2$forecasts,col="orange")
-lines(test$Xt, fore.dlm2$forecasts,col="orange")
-points(test$Xt, fore.ardl$forecasts,col="green")
-lines(test$Xt, fore.ardl$forecasts,col="green")
+
+plot(testmeteor$T2M, testmeteor$TS, type="b", col="black", ylim=c(10,26))
+points(testmeteor$T2M, forekoyck$forecasts,col="red")
+lines(testmeteor$T2M, forekoyck$forecasts,col="red")
+legend("topleft",c("aktual", "koyck","DLM 1","DLM 2", "autoregressive"), lty=1, col=c("black","red","blue","orange","green"), cex=0.8)
+plot(testmeteor$T2M, testmeteor$TS, type="b", col="black", ylim=c(10,26))
+points(testmeteor$T2M, foredlm$forecasts,col="blue")
+lines(testmeteor$T2M, foredlm$forecasts,col="blue")
+legend("topleft",c("aktual", "koyck","DLM 1","DLM 2", "autoregressive"), lty=1, col=c("black","red","blue","orange","green"), cex=0.8)
+plot(testmeteor$T2M, testmeteor$TS, type="b", col="black", ylim=c(10,26))
+points(testmeteor$T2M, foredlm2$forecasts,col="orange")
+lines(testmeteor$T2M, foredlm2$forecasts,col="orange")
+legend("topleft",c("aktual", "koyck","DLM 1","DLM 2", "autoregressive"), lty=1, col=c("black","red","blue","orange","green"), cex=0.8)
+plot(testmeteor$T2M, testmeteor$TS, type="b", col="black", ylim=c(10,26))
+points(testmeteor$T2M, foreardl$forecasts,col="green")
+lines(testmeteor$T2M, foreardl$forecasts,col="green")
 legend("topleft",c("aktual", "koyck","DLM 1","DLM 2", "autoregressive"), lty=1, col=c("black","red","blue","orange","green"), cex=0.8)
 ```
 
-Berdasarkan plot tersebut, terlihat bahwa plot yang paling mendekati data aktualnya adalah Model koyck, sehingga dapat disimpulkan model terbaik dalam hal ini adalah model regresi koyck
-
-## Pengayaan (Regresi Berganda)
-
-### Data
-
-```{r}
-data(M1Germany)
-data1 = M1Germany[1:144,]
-```
-
-### DLM
-
-```{r}
-#Run the search over finite DLMs according to AIC values
-finiteDLMauto(formula = logprice ~ interest+logm1,
-              data = data.frame(data1), q.min = 1, q.max = 5,
-              model.type = "dlm", error.type = "AIC", trace = FALSE)
-```
-
-```{r}
-#model dlm berganda
-model.dlmberganda = dlm(formula = logprice ~ interest + logm1,
-                data = data.frame(data1) , q = 5)
-summary(model.dlmberganda)
-
-model.dlmberganda2 = dlm(formula = logprice ~ interest + logm1,
-                        data = data.frame(data1) , q = 1)
-summary(model.dlmberganda2)
-```
-
-### ARDL
-
-```{r}
-#Mencari orde lag optimum model ARDL
-ardlBoundOrders(data = data1 , formula = logprice ~ interest + logm1,
-                ic="AIC")
-
-model.ardlDlmberganda = ardlDlm(formula = logprice ~ interest + logm1,
-                        data = data.frame(data1) , p = 4 , q = 4)
-summary(model.ardlDlmberganda)
-```
-
-```{r}
-#model p interest 0 p logm1 4 
-rem.p = list(interest = c(1,2,3,4))
-remove = list(p = rem.p)
-model.ardlDlmberganda2 = ardlDlm(formula = logprice ~ interest + logm1,
-                        data = data.frame(data1) , p = 4 , q = 4 ,
-                        remove = remove)
-summary(model.ardlDlmberganda2)
-```
-
-Proses selanjutnya sama dengan pemodelan menggunakan peubah tunggal.
+Berdasarkan plot tersebut, terlihat bahwa plot yang paling mendekati data aktualnya adalah semua model kecuali Model koyck, sehingga dapat disimpulkan model terbaik dalam hal ini adalah DLM1, DLM2, dan autoregressive
