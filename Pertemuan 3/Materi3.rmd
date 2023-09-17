@@ -16,9 +16,9 @@ output:
 
 ```{r, echo=FALSE}
 #PACKAGES
-install.packages("dLagM") #install jika belum ada
-install.packages("dynlm") #install jika belum ada
-install.packages("MLmetrics") #install jika belum ada
+#install.packages("dLagM") #install jika belum ada
+#install.packages("dynlm") #install jika belum ada
+#install.packages("MLmetrics") #install jika belum ada
 library(dLagM)
 library(dynlm)
 library(MLmetrics)
@@ -97,6 +97,7 @@ fore.koyck
 mape.koyck <- MAPE(fore.koyck$forecasts, test$Yt)
 #akurasi data training
 GoF(model.koyck)
+test$Yt
 ```
 
 ## Regression with Distributed Lag
@@ -396,4 +397,4 @@ model.ardlDlmberganda2 = ardlDlm(formula = logprice ~ interest + logm1,
 summary(model.ardlDlmberganda2)
 ```
 
-Proses selanjutnya sama dengan pemodelan menggunakan peubah tunggal. Kok gak ada perubahan apa apa sih
+Proses selanjutnya sama dengan pemodelan menggunakan peubah tunggal.
