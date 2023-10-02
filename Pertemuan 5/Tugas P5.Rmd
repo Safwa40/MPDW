@@ -1,6 +1,6 @@
 ---
 title: "Data Tidak Stasioner"
-date: "2023-09-23"
+date: "2023-09-30"
 ---
 
 ```{r}
@@ -12,7 +12,7 @@ library(MASS)
 
 ```{r}
 library(rio)
-batulu <- import("https://raw.githubusercontent.com/Safwa40/MPDW/main/Pertemuan%205/Data1.csv")
+batulu <- import("https://raw.githubusercontent.com/Safwa40/MPDW/main/Pertemuan%201/Data1.csv")
 head(batulu)
 waktu <-batulu$Periodebulan
 bara <-ts(batulu$`Batubara(USD/ton)`)
@@ -32,7 +32,7 @@ plotbara
 mean(bara)
 ```
 
-Plot deret waktu di atas menunjukkan bahwa data stasioner dalam rataan, ditandai dengan data yang menyebar di sekitar nilai tengahnya (18) dan stasioner dalam ragam, ditandai dengan lebar pita yang cenderung sama.
+Plot deret waktu di atas menunjukkan bahwa data stasioner dalam rataan, ditandai dengan data yang menyebar di sekitar nilai tengahnya (108,262) dan tidak stasioner dalam ragam, ditandai dengan lebar pita yang berbeda.
 
 ### Plot ACF
 
@@ -58,7 +58,7 @@ Berdasarkan uji ADF tersebut, didapat *p-value* sebesar 0.35 yang lebih besar da
 
 ```{r}
 index <- seq(1:128)
-bcx = boxcox(bara~index, lambda = seq(-5,4,by=0.1))
+bcx = boxcox(bara~index, lambda = seq(-2,2,by=0.1))
 #Nilai Rounded Lambda
 lmbd <- bcx$x[which.max(bcx$y)]
 lmbd
@@ -66,7 +66,7 @@ lmbd
 bcx$x[bcx$y > max(bcx$y) - 1/2 * qchisq(.95,1)]
 ```
 
-Gambar di atas menunjukkan nilai *rounded value* ($\lambda$) optimum sebesar **-0,8** dan pada selang kepercayaan 95% nilai memiliki batas bawah **-1,1** dan batas atas **-0,6**. Selang tersebut memuat nilai satu sehingga dapat dikatakan bahwa data bangkitan tidak stasioner dalam ragam.
+Gambar di atas menunjukkan nilai *rounded value* ($\lambda$) optimum sebesar **-0,8282828** dan pada selang kepercayaan 95% nilai memiliki batas bawah **-1,1515152** dan batas atas **-0,5454545**. Selang tersebut tidak memuat nilai satu sehingga dapat dikatakan bahwa data bangkitan tidak stasioner dalam ragam.
 
 ### Partisi Data
 
@@ -113,7 +113,7 @@ Berdasarkan uji ADF tersebut, didapat *p-value* sebesar 0.6723 yang lebih besar 
 
 ```{r}
 index <- seq(1:87)
-bc = boxcox(dt_bara1~index, lambda = seq(-2,6,by=1))
+bc = boxcox(dt_bara1~index, lambda = seq(-2,2,by=1))
 #Nilai Rounded Lambda
 lambda <- bc$x[which.max(bc$y)]
 lambda
@@ -121,7 +121,7 @@ lambda
 bc$x[bc$y > max(bc$y) - 1/2 * qchisq(.95,1)]
 ```
 
-Gambar di atas menunjukkan nilai *rounded value* ($\lambda$) optimum sebesar **0,8282828** dan pada selang kepercayaan 95% nilai memiliki batas bawah **-0,22** dan batas atas **1,879**. Selang tersebut memuat nilai satu sehingga dapat dikatakan bahwa data bangkitan stasioner dalam ragam.
+Gambar di atas menunjukkan nilai *rounded value* ($\lambda$) optimum sebesar **0,8282828** dan pada selang kepercayaan 95% nilai memiliki batas bawah **-0,26262626** dan batas atas **1,91919192**. Selang tersebut memuat nilai satu sehingga dapat dikatakan bahwa data bangkitan stasioner dalam ragam.
 
 #### Bagian 2
 
@@ -140,7 +140,7 @@ dt_bara2 |> as_tsibble() |>
   xlab("Obs") + ylab("Nilai")
 ```
 
-Plot deret waktu di atas menunjukkan bahwa data tidak stasioner dalam rataan, ditandai dengan data yang tidak menyebar di sekitar nilai tengahnya (108) dan stasioner dalam ragam, ditandai dengan lebar pita yang cenderung sama.
+Plot deret waktu di atas menunjukkan bahwa data tidak stasioner dalam rataan, ditandai dengan data yang tidak menyebar di sekitar nilai tengahnya (108) dan tidak stasioner dalam ragam, ditandai dengan lebar pita yang berbeda.
 
 #### Plot ACF
 
@@ -154,7 +154,6 @@ Berdasarkan plot ACF, terlihat bahwa plot ACF pada data tersebut cenderung *tail
 ```{r}
 adf.test(dt_bara2)
 ```
-
 $H_0$ : Data tidak stasioner dalam rataan
 
 $H_1$ : Data stasioner dalam rataan
@@ -172,3 +171,4 @@ lambda
 #SK
 bc$x[bc$y > max(bc$y) - 1/2 * qchisq(.95,1)]
 ```
+Gambar di atas menunjukkan nilai *rounded value* ($\lambda$) optimum sebesar **-0.8282828** dan pada selang kepercayaan 95% nilai memiliki batas bawah **-1,1515152** dan batas atas **-0,5454545**. Selang tersebut tidak memuat nilai satu sehingga dapat dikatakan bahwa data bangkitan tidak stasioner dalam ragam.
