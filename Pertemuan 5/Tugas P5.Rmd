@@ -12,7 +12,7 @@ library(MASS)
 
 ```{r}
 library(rio)
-batulu <- import("https://raw.githubusercontent.com/Safwa40/MPDW/main/Pertemuan%201/Data1.csv")
+batulu <- import("https://raw.githubusercontent.com/Safwa40/MPDW/main/Pertemuan%205/Data1.csv")
 head(batulu)
 waktu <-batulu$Periodebulan
 bara <-ts(batulu$`Batubara(USD/ton)`)
