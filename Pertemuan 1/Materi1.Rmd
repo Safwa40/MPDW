@@ -8,6 +8,10 @@ output:
   pdf_document: default
   word_document: default
 ---
+```{r}
+'https://github.com/rizkynurhambali/Praktikum-MPDW-2324/blob/main/Pertemuan%2067/kurs.csv'
+```
+
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
