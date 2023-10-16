@@ -1,3 +1,8 @@
+------------------------------------------------------------------
+Pertemuan 6 dan 7 MPDW
+Materi : "Pendugaan Parameter, Diagnostik Model, dan Peramalan"
+------------------------------------------------------------------
+
 ## Packages
 
 ```{r}
@@ -14,7 +19,7 @@ library(graphics)
 
 ## Data Asli
 
-Digunakan data kurs yang dalam hal ini hanya digunakan data 500 periode awal
+Digunakan data pada pertemuan pertama mengenai harga acuan batubara(USD/ton) setiap bulan (Januari 2013-Agustus 2023)
 
 ```{r}
 library(rio)
@@ -24,6 +29,37 @@ databara.ts<-ts(databara)
 ```
 
 ### Eksplorasi Data
+
+```{r}
+#--PLOT TIME SERIES--#
+plot(databara.ts,
+     col = "navyblue",
+     lwd = 1,
+     type = "o",
+     xlab = "Time",
+     ylab = "Data")
+```
+
+Berdasarkan plot data terlihat bahwa data tidak stasioner terhadap rataan dan ragam. Untuk lebih mengetahui tentang data maka akan dilakukan pengecekan acf dan pacf untuk melihat ke stasioneran. 
+
+```{r}
+#--CEK KESTASIONERAN---#
+acf(databara.ts, main="ACF", lag.max=20)
+```
+
+Berdasarkan plot ACF di atas, dapat dilihat bahwa plot *cuts off* pada *lag* ke-2. Hal ini sesuai dengan proses pembangkitan model MA(2).
+
+```{r}
+adf.test(databara.ts) 
+#stasioner
+```
+
+$H_0$ : Data tidak stasioner dalam rataan
+
+$H_1$ : Data stasioner dalam rataan
+
+Berdasarkan uji ADF tersebut, didapat *p-value* sebesar 0.574 yang lebih besar dari taraf nyata 5% sehingga tak tolak $H_0$ dan menandakan bahwa data tidak stasioner dalam rataan. Hal ini sesuai dengan hasil eksplorasi menggunakan plot time series dan plot ACF.
+
 
 #### Plot Data Penuh
 
@@ -318,3 +354,5 @@ colnames(perbandingan.da)<-c("Aktual","Hasil Forecast")
 perbandingan.da
 accuracy(ts(hasil[-1]), head(test.ts, n=30))
 ```
+
+Dari data tersebut terlihat nilai mape >10 menandakan data tersebut kurang bagus
