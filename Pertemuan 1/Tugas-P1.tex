@@ -1,0 +1,797 @@
+% Options for packages loaded elsewhere
+\PassOptionsToPackage{unicode}{hyperref}
+\PassOptionsToPackage{hyphens}{url}
+%
+\documentclass[
+]{article}
+\usepackage{amsmath,amssymb}
+\usepackage{iftex}
+\ifPDFTeX
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+  \usepackage{textcomp} % provide euro and other symbols
+\else % if luatex or xetex
+  \usepackage{unicode-math} % this also loads fontspec
+  \defaultfontfeatures{Scale=MatchLowercase}
+  \defaultfontfeatures[\rmfamily]{Ligatures=TeX,Scale=1}
+\fi
+\usepackage{lmodern}
+\ifPDFTeX\else
+  % xetex/luatex font selection
+\fi
+% Use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+\IfFileExists{microtype.sty}{% use microtype if available
+  \usepackage[]{microtype}
+  \UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\makeatletter
+\@ifundefined{KOMAClassName}{% if non-KOMA class
+  \IfFileExists{parskip.sty}{%
+    \usepackage{parskip}
+  }{% else
+    \setlength{\parindent}{0pt}
+    \setlength{\parskip}{6pt plus 2pt minus 1pt}}
+}{% if KOMA class
+  \KOMAoptions{parskip=half}}
+\makeatother
+\usepackage{xcolor}
+\usepackage[margin=1in]{geometry}
+\usepackage{color}
+\usepackage{fancyvrb}
+\newcommand{\VerbBar}{|}
+\newcommand{\VERB}{\Verb[commandchars=\\\{\}]}
+\DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\}}
+% Add ',fontsize=\small' for more characters per line
+\usepackage{framed}
+\definecolor{shadecolor}{RGB}{248,248,248}
+\newenvironment{Shaded}{\begin{snugshade}}{\end{snugshade}}
+\newcommand{\AlertTok}[1]{\textcolor[rgb]{0.94,0.16,0.16}{#1}}
+\newcommand{\AnnotationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\AttributeTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{#1}}
+\newcommand{\BaseNTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\BuiltInTok}[1]{#1}
+\newcommand{\CharTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\CommentTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\CommentVarTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\ConstantTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{#1}}
+\newcommand{\ControlFlowTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\DataTypeTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{#1}}
+\newcommand{\DecValTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\DocumentationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\ErrorTok}[1]{\textcolor[rgb]{0.64,0.00,0.00}{\textbf{#1}}}
+\newcommand{\ExtensionTok}[1]{#1}
+\newcommand{\FloatTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\FunctionTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\ImportTok}[1]{#1}
+\newcommand{\InformationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\KeywordTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\NormalTok}[1]{#1}
+\newcommand{\OperatorTok}[1]{\textcolor[rgb]{0.81,0.36,0.00}{\textbf{#1}}}
+\newcommand{\OtherTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{#1}}
+\newcommand{\PreprocessorTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\RegionMarkerTok}[1]{#1}
+\newcommand{\SpecialCharTok}[1]{\textcolor[rgb]{0.81,0.36,0.00}{\textbf{#1}}}
+\newcommand{\SpecialStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\StringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\VariableTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\VerbatimStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\WarningTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\usepackage{graphicx}
+\makeatletter
+\def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth\else\Gin@nat@width\fi}
+\def\maxheight{\ifdim\Gin@nat@height>\textheight\textheight\else\Gin@nat@height\fi}
+\makeatother
+% Scale images if necessary, so that they will not overflow the page
+% margins by default, and it is still possible to overwrite the defaults
+% using explicit options in \includegraphics[width, height, ...]{}
+\setkeys{Gin}{width=\maxwidth,height=\maxheight,keepaspectratio}
+% Set default figure placement to htbp
+\makeatletter
+\def\fps@figure{htbp}
+\makeatother
+\setlength{\emergencystretch}{3em} % prevent overfull lines
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\setcounter{secnumdepth}{-\maxdimen} % remove section numbering
+\ifLuaTeX
+  \usepackage{selnolig}  % disable illegal ligatures
+\fi
+\IfFileExists{bookmark.sty}{\usepackage{bookmark}}{\usepackage{hyperref}}
+\IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
+\urlstyle{same}
+\hypersetup{
+  hidelinks,
+  pdfcreator={LaTeX via pandoc}}
+
+\author{}
+\date{\vspace{-2.5em}}
+
+\begin{document}
+
+\hypertarget{install-packages}{%
+\subsection{Install Packages}\label{install-packages}}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\#install.packages("forecast")}
+\CommentTok{\#install.packages("graphics")}
+\CommentTok{\#install.packages("TTR")}
+\CommentTok{\#install.packages("TSA")}
+\end{Highlighting}
+\end{Shaded}
+
+\hypertarget{pemanggilan-packages}{%
+\subsection{Pemanggilan Packages}\label{pemanggilan-packages}}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{library}\NormalTok{(}\StringTok{"forecast"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Registered S3 method overwritten by 'quantmod':
+##   method            from
+##   as.zoo.data.frame zoo
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{library}\NormalTok{(}\StringTok{"graphics"}\NormalTok{)}
+\FunctionTok{library}\NormalTok{(}\StringTok{"TTR"}\NormalTok{)}
+\FunctionTok{library}\NormalTok{(}\StringTok{"TSA"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Registered S3 methods overwritten by 'TSA':
+##   method       from    
+##   fitted.Arima forecast
+##   plot.Arima   forecast
+\end{verbatim}
+
+\begin{verbatim}
+## 
+## Attaching package: 'TSA'
+\end{verbatim}
+
+\begin{verbatim}
+## The following objects are masked from 'package:stats':
+## 
+##     acf, arima
+\end{verbatim}
+
+\begin{verbatim}
+## The following object is masked from 'package:utils':
+## 
+##     tar
+\end{verbatim}
+
+\hypertarget{memanggil-data-dari-github}{%
+\subsection{Memanggil data dari
+github}\label{memanggil-data-dari-github}}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{library}\NormalTok{(rio)}
+\NormalTok{data1 }\OtherTok{\textless{}{-}} \FunctionTok{import}\NormalTok{(}\StringTok{"https://raw.githubusercontent.com/Safwa40/MPDW/main/Pertemuan\%201/Data1.csv"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\hypertarget{eksplorasi-data}{%
+\subsection{Eksplorasi Data}\label{eksplorasi-data}}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{View}\NormalTok{(data1)}
+\FunctionTok{str}\NormalTok{(data1)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 'data.frame':    128 obs. of  2 variables:
+##  $ Periodebulan     : int  1 2 3 4 5 6 7 8 9 10 ...
+##  $ Batubara(USD/ton): num  87.5 88.3 90.1 88.6 85.3 ...
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{dim}\NormalTok{(data1)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] 128   2
+\end{verbatim}
+
+\hypertarget{merubah-data-jadi-time-series}{%
+\subsection{Merubah Data jadi Time
+Series}\label{merubah-data-jadi-time-series}}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{data1ts }\OtherTok{\textless{}{-}} \FunctionTok{ts}\NormalTok{(data1}\SpecialCharTok{$}\StringTok{\textquotesingle{}Batubara(USD/ton)\textquotesingle{}}\NormalTok{)}
+\FunctionTok{print}\NormalTok{(data1ts)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Time Series:
+## Start = 1 
+## End = 128 
+## Frequency = 1 
+##   [1]  87.55  88.35  90.09  88.56  85.33  84.87  81.69  76.70  76.89  76.61
+##  [11]  78.13  80.31  81.90  80.44  77.01  74.81  73.60  73.64  72.45  70.29
+##  [21]  69.69  67.26  65.70  64.65  63.84  62.92  67.76  64.48  61.08  59.59
+##  [31]  59.16  59.14  58.21  57.39  54.43  53.51  53.20  50.92  51.62  52.32
+##  [41]  51.20  51.81  53.00  58.37  63.93  69.07  84.89 101.69  86.23  83.32
+##  [51]  81.90  82.51  83.81  75.46  78.95  83.97  92.03  93.99  94.80  94.04
+##  [61]  95.54 100.69 101.86  94.75  89.53  96.61 104.65 107.83 104.81 100.89
+##  [71]  97.90  92.51  92.41  91.80  90.57  88.85  81.86  81.48  71.92  72.67
+##  [81]  65.79  64.80  66.27  66.30  65.93  66.89  67.08  65.77  61.11  52.98
+##  [91]  52.16  50.34  49.42  51.00  55.71  59.65  75.84  87.79  84.47  86.68
+## [101]  89.74 100.33 115.35 130.99 150.03 161.63 215.01 159.79 158.50 188.38
+## [111] 203.69 288.40 275.64 323.91 319.00 321.59 319.22 330.97 308.20 281.48
+## [121] 305.21 277.05 283.08 265.26 206.16 191.26 191.60 179.90
+\end{verbatim}
+
+\hypertarget{melihat-analisis-datanya}{%
+\subsection{Melihat Analisis Datanya}\label{melihat-analisis-datanya}}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{summary}\NormalTok{(data1ts)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+##   49.42   65.78   82.20  108.26  100.74  330.97
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{ts.plot}\NormalTok{(data1ts, }\AttributeTok{xlab=}\StringTok{"Time Period"}\NormalTok{, }\AttributeTok{ylab=}\StringTok{"Harga Acuan Batu Bara (USD/ton)"}\NormalTok{, }
+        \AttributeTok{main =} \StringTok{"Time Series Plot"}\NormalTok{)}
+\FunctionTok{points}\NormalTok{(data1ts)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{Tugas-P1_files/figure-latex/unnamed-chunk-7-1.pdf} Pola
+plot tersebut tidak berbentuk musiman ataupun konstan sehingga dicoba
+pemulusan menggunakan DMA dan DES karena SMA dan SES lebih cocok untuk
+data yang stasioner
+
+\#Double Moving Average
+
+Pembagian Data Latih da Data Uji
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\#Pembagian data latih dan data uji dilakukan dengan perbandingan 80\% data latih dan 20\% data uji.}
+\CommentTok{\#membagi data latih dan data uji}
+\NormalTok{training\_ma }\OtherTok{\textless{}{-}}\NormalTok{ data1[}\DecValTok{1}\SpecialCharTok{:}\DecValTok{102}\NormalTok{,]}
+\NormalTok{testing\_ma }\OtherTok{\textless{}{-}}\NormalTok{ data1[}\DecValTok{103}\SpecialCharTok{:}\DecValTok{128}\NormalTok{,]}
+\NormalTok{train\_ma.ts }\OtherTok{\textless{}{-}} \FunctionTok{ts}\NormalTok{(training\_ma}\SpecialCharTok{$}\StringTok{\textasciigrave{}}\AttributeTok{Batubara(USD/ton)}\StringTok{\textasciigrave{}}\NormalTok{)}
+\NormalTok{test\_ma.ts }\OtherTok{\textless{}{-}} \FunctionTok{ts}\NormalTok{(testing\_ma}\SpecialCharTok{$}\StringTok{\textasciigrave{}}\AttributeTok{Batubara(USD/ton)}\StringTok{\textasciigrave{}}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+Eksplorasi data dilakukan pada keseluruhan data, data latih serta data
+uji menggunakan plot data deret waktu.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\#eksplorasi keseluruhan data}
+\FunctionTok{plot}\NormalTok{(data1ts, }\AttributeTok{col=}\StringTok{"red"}\NormalTok{,}\AttributeTok{main=}\StringTok{"Plot semua data"}\NormalTok{)}
+\FunctionTok{points}\NormalTok{(data1ts)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{Tugas-P1_files/figure-latex/unnamed-chunk-9-1.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\#eksplorasi data latih}
+\FunctionTok{plot}\NormalTok{(train\_ma.ts, }\AttributeTok{col=}\StringTok{"black"}\NormalTok{,}\AttributeTok{main=}\StringTok{"Plot data latih"}\NormalTok{)}
+\FunctionTok{points}\NormalTok{(train\_ma.ts)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{Tugas-P1_files/figure-latex/unnamed-chunk-9-2.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\#eksplorasi data uji}
+\FunctionTok{plot}\NormalTok{(test\_ma.ts, }\AttributeTok{col=}\StringTok{"blue"}\NormalTok{,}\AttributeTok{main=}\StringTok{"Plot data uji"}\NormalTok{)}
+\FunctionTok{points}\NormalTok{(test\_ma.ts)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{Tugas-P1_files/figure-latex/unnamed-chunk-9-3.pdf}
+
+\#Double Moving Average (DMA)\# Metode pemulusan Double Moving Average
+(DMA) pada dasarnya mirip dengan SMA. Namun demikian, metode ini lebih
+cocok digunakan untuk pola data trend. Proses pemulusan dengan rata rata
+dalam metode ini dilakukan sebanyak 2 kali.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{data.sma}\OtherTok{\textless{}{-}}\FunctionTok{SMA}\NormalTok{(train\_ma.ts, }\AttributeTok{n=}\DecValTok{2}\NormalTok{)}
+\NormalTok{data.sma}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Time Series:
+## Start = 1 
+## End = 102 
+## Frequency = 1 
+##   [1]      NA  87.950  89.220  89.325  86.945  85.100  83.280  79.195  76.795
+##  [10]  76.750  77.370  79.220  81.105  81.170  78.725  75.910  74.205  73.620
+##  [19]  73.045  71.370  69.990  68.475  66.480  65.175  64.245  63.380  65.340
+##  [28]  66.120  62.780  60.335  59.375  59.150  58.675  57.800  55.910  53.970
+##  [37]  53.355  52.060  51.270  51.970  51.760  51.505  52.405  55.685  61.150
+##  [46]  66.500  76.980  93.290  93.960  84.775  82.610  82.205  83.160  79.635
+##  [55]  77.205  81.460  88.000  93.010  94.395  94.420  94.790  98.115 101.275
+##  [64]  98.305  92.140  93.070 100.630 106.240 106.320 102.850  99.395  95.205
+##  [73]  92.460  92.105  91.185  89.710  85.355  81.670  76.700  72.295  69.230
+##  [82]  65.295  65.535  66.285  66.115  66.410  66.985  66.425  63.440  57.045
+##  [91]  52.570  51.250  49.880  50.210  53.355  57.680  67.745  81.815  86.130
+## [100]  85.575  88.210  95.035
+\end{verbatim}
+
+Dengan nilai m yang berbeda dimulai dari 4, 3, dan 2 diperoleh nilai
+mape terekcil dengan nilai m = 2.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{dma }\OtherTok{\textless{}{-}} \FunctionTok{SMA}\NormalTok{(data.sma, }\AttributeTok{n =} \DecValTok{2}\NormalTok{)}
+\NormalTok{At }\OtherTok{\textless{}{-}} \DecValTok{2}\SpecialCharTok{*}\NormalTok{data.sma }\SpecialCharTok{{-}}\NormalTok{ dma}
+\NormalTok{Bt }\OtherTok{\textless{}{-}} \DecValTok{2}\SpecialCharTok{/}\NormalTok{(}\DecValTok{2{-}1}\NormalTok{)}\SpecialCharTok{*}\NormalTok{(data.sma }\SpecialCharTok{{-}}\NormalTok{ dma)}
+\NormalTok{data.dma}\OtherTok{\textless{}{-}}\NormalTok{ At}\SpecialCharTok{+}\NormalTok{Bt}
+\NormalTok{data.ramal2}\OtherTok{\textless{}{-}} \FunctionTok{c}\NormalTok{(}\ConstantTok{NA}\NormalTok{, data.dma)}
+
+\NormalTok{t }\OtherTok{=} \DecValTok{1}\SpecialCharTok{:}\DecValTok{26}
+\NormalTok{f }\OtherTok{=} \FunctionTok{c}\NormalTok{()}
+
+\ControlFlowTok{for}\NormalTok{ (i }\ControlFlowTok{in}\NormalTok{ t) \{}
+\NormalTok{  f[i] }\OtherTok{=}\NormalTok{ At[}\FunctionTok{length}\NormalTok{(At)] }\SpecialCharTok{+}\NormalTok{ Bt[}\FunctionTok{length}\NormalTok{(Bt)]}\SpecialCharTok{*}\NormalTok{(i)}
+\NormalTok{\}}
+\NormalTok{data.gab2 }\OtherTok{\textless{}{-}} \FunctionTok{cbind}\NormalTok{(}\AttributeTok{aktual =} \FunctionTok{c}\NormalTok{(train\_ma.ts,}\FunctionTok{rep}\NormalTok{(}\ConstantTok{NA}\NormalTok{,}\DecValTok{26}\NormalTok{)), }\AttributeTok{pemulusan1 =} \FunctionTok{c}\NormalTok{(data.sma,}\FunctionTok{rep}\NormalTok{(}\ConstantTok{NA}\NormalTok{,}\DecValTok{26}\NormalTok{)),}\AttributeTok{pemulusan2 =} \FunctionTok{c}\NormalTok{(data.dma, }\FunctionTok{rep}\NormalTok{(}\ConstantTok{NA}\NormalTok{,}\DecValTok{26}\NormalTok{)),}\AttributeTok{At =} \FunctionTok{c}\NormalTok{(At, }\FunctionTok{rep}\NormalTok{(}\ConstantTok{NA}\NormalTok{,}\DecValTok{26}\NormalTok{)), }\AttributeTok{Bt =} \FunctionTok{c}\NormalTok{(Bt,}\FunctionTok{rep}\NormalTok{(}\ConstantTok{NA}\NormalTok{,}\DecValTok{26}\NormalTok{)),}\AttributeTok{ramalan =} \FunctionTok{c}\NormalTok{(data.ramal2, f[}\SpecialCharTok{{-}}\DecValTok{1}\NormalTok{]))}
+\NormalTok{data.gab2}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##        aktual pemulusan1 pemulusan2       At     Bt  ramalan
+##   [1,]  87.55         NA         NA       NA     NA       NA
+##   [2,]  88.35     87.950         NA       NA     NA       NA
+##   [3,]  90.09     89.220    91.1250  89.8550  1.270       NA
+##   [4,]  88.56     89.325    89.4825  89.3775  0.105  91.1250
+##   [5,]  85.33     86.945    83.3750  85.7550 -2.380  89.4825
+##   [6,]  84.87     85.100    82.3325  84.1775 -1.845  83.3750
+##   [7,]  81.69     83.280    80.5500  82.3700 -1.820  82.3325
+##   [8,]  76.70     79.195    73.0675  77.1525 -4.085  80.5500
+##   [9,]  76.89     76.795    73.1950  75.5950 -2.400  73.0675
+##  [10,]  76.61     76.750    76.6825  76.7275 -0.045  73.1950
+##  [11,]  78.13     77.370    78.3000  77.6800  0.620  76.6825
+##  [12,]  80.31     79.220    81.9950  80.1450  1.850  78.3000
+##  [13,]  81.90     81.105    83.9325  82.0475  1.885  81.9950
+##  [14,]  80.44     81.170    81.2675  81.2025  0.065  83.9325
+##  [15,]  77.01     78.725    75.0575  77.5025 -2.445  81.2675
+##  [16,]  74.81     75.910    71.6875  74.5025 -2.815  75.0575
+##  [17,]  73.60     74.205    71.6475  73.3525 -1.705  71.6875
+##  [18,]  73.64     73.620    72.7425  73.3275 -0.585  71.6475
+##  [19,]  72.45     73.045    72.1825  72.7575 -0.575  72.7425
+##  [20,]  70.29     71.370    68.8575  70.5325 -1.675  72.1825
+##  [21,]  69.69     69.990    67.9200  69.3000 -1.380  68.8575
+##  [22,]  67.26     68.475    66.2025  67.7175 -1.515  67.9200
+##  [23,]  65.70     66.480    63.4875  65.4825 -1.995  66.2025
+##  [24,]  64.65     65.175    63.2175  64.5225 -1.305  63.4875
+##  [25,]  63.84     64.245    62.8500  63.7800 -0.930  63.2175
+##  [26,]  62.92     63.380    62.0825  62.9475 -0.865  62.8500
+##  [27,]  67.76     65.340    68.2800  66.3200  1.960  62.0825
+##  [28,]  64.48     66.120    67.2900  66.5100  0.780  68.2800
+##  [29,]  61.08     62.780    57.7700  61.1100 -3.340  67.2900
+##  [30,]  59.59     60.335    56.6675  59.1125 -2.445  57.7700
+##  [31,]  59.16     59.375    57.9350  58.8950 -0.960  56.6675
+##  [32,]  59.14     59.150    58.8125  59.0375 -0.225  57.9350
+##  [33,]  58.21     58.675    57.9625  58.4375 -0.475  58.8125
+##  [34,]  57.39     57.800    56.4875  57.3625 -0.875  57.9625
+##  [35,]  54.43     55.910    53.0750  54.9650 -1.890  56.4875
+##  [36,]  53.51     53.970    51.0600  53.0000 -1.940  53.0750
+##  [37,]  53.20     53.355    52.4325  53.0475 -0.615  51.0600
+##  [38,]  50.92     52.060    50.1175  51.4125 -1.295  52.4325
+##  [39,]  51.62     51.270    50.0850  50.8750 -0.790  50.1175
+##  [40,]  52.32     51.970    53.0200  52.3200  0.700  50.0850
+##  [41,]  51.20     51.760    51.4450  51.6550 -0.210  53.0200
+##  [42,]  51.81     51.505    51.1225  51.3775 -0.255  51.4450
+##  [43,]  53.00     52.405    53.7550  52.8550  0.900  51.1225
+##  [44,]  58.37     55.685    60.6050  57.3250  3.280  53.7550
+##  [45,]  63.93     61.150    69.3475  63.8825  5.465  60.6050
+##  [46,]  69.07     66.500    74.5250  69.1750  5.350  69.3475
+##  [47,]  84.89     76.980    92.7000  82.2200 10.480  74.5250
+##  [48,] 101.69     93.290   117.7550 101.4450 16.310  92.7000
+##  [49,]  86.23     93.960    94.9650  94.2950  0.670 117.7550
+##  [50,]  83.32     84.775    70.9975  80.1825 -9.185  94.9650
+##  [51,]  81.90     82.610    79.3625  81.5275 -2.165  70.9975
+##  [52,]  82.51     82.205    81.5975  82.0025 -0.405  79.3625
+##  [53,]  83.81     83.160    84.5925  83.6375  0.955  81.5975
+##  [54,]  75.46     79.635    74.3475  77.8725 -3.525  84.5925
+##  [55,]  78.95     77.205    73.5600  75.9900 -2.430  74.3475
+##  [56,]  83.97     81.460    87.8425  83.5875  4.255  73.5600
+##  [57,]  92.03     88.000    97.8100  91.2700  6.540  87.8425
+##  [58,]  93.99     93.010   100.5250  95.5150  5.010  97.8100
+##  [59,]  94.80     94.395    96.4725  95.0875  1.385 100.5250
+##  [60,]  94.04     94.420    94.4575  94.4325  0.025  96.4725
+##  [61,]  95.54     94.790    95.3450  94.9750  0.370  94.4575
+##  [62,] 100.69     98.115   103.1025  99.7775  3.325  95.3450
+##  [63,] 101.86    101.275   106.0150 102.8550  3.160 103.1025
+##  [64,]  94.75     98.305    93.8500  96.8200 -2.970 106.0150
+##  [65,]  89.53     92.140    82.8925  89.0575 -6.165  93.8500
+##  [66,]  96.61     93.070    94.4650  93.5350  0.930  82.8925
+##  [67,] 104.65    100.630   111.9700 104.4100  7.560  94.4650
+##  [68,] 107.83    106.240   114.6550 109.0450  5.610 111.9700
+##  [69,] 104.81    106.320   106.4400 106.3600  0.080 114.6550
+##  [70,] 100.89    102.850    97.6450 101.1150 -3.470 106.4400
+##  [71,]  97.90     99.395    94.2125  97.6675 -3.455  97.6450
+##  [72,]  92.51     95.205    88.9200  93.1100 -4.190  94.2125
+##  [73,]  92.41     92.460    88.3425  91.0875 -2.745  88.9200
+##  [74,]  91.80     92.105    91.5725  91.9275 -0.355  88.3425
+##  [75,]  90.57     91.185    89.8050  90.7250 -0.920  91.5725
+##  [76,]  88.85     89.710    87.4975  88.9725 -1.475  89.8050
+##  [77,]  81.86     85.355    78.8225  83.1775 -4.355  87.4975
+##  [78,]  81.48     81.670    76.1425  79.8275 -3.685  78.8225
+##  [79,]  71.92     76.700    69.2450  74.2150 -4.970  76.1425
+##  [80,]  72.67     72.295    65.6875  70.0925 -4.405  69.2450
+##  [81,]  65.79     69.230    64.6325  67.6975 -3.065  65.6875
+##  [82,]  64.80     65.295    59.3925  63.3275 -3.935  64.6325
+##  [83,]  66.27     65.535    65.8950  65.6550  0.240  59.3925
+##  [84,]  66.30     66.285    67.4100  66.6600  0.750  65.8950
+##  [85,]  65.93     66.115    65.8600  66.0300 -0.170  67.4100
+##  [86,]  66.89     66.410    66.8525  66.5575  0.295  65.8600
+##  [87,]  67.08     66.985    67.8475  67.2725  0.575  66.8525
+##  [88,]  65.77     66.425    65.5850  66.1450 -0.560  67.8475
+##  [89,]  61.11     63.440    58.9625  61.9475 -2.985  65.5850
+##  [90,]  52.98     57.045    47.4525  53.8475 -6.395  58.9625
+##  [91,]  52.16     52.570    45.8575  50.3325 -4.475  47.4525
+##  [92,]  50.34     51.250    49.2700  50.5900 -1.320  45.8575
+##  [93,]  49.42     49.880    47.8250  49.1950 -1.370  49.2700
+##  [94,]  51.00     50.210    50.7050  50.3750  0.330  47.8250
+##  [95,]  55.71     53.355    58.0725  54.9275  3.145  50.7050
+##  [96,]  59.65     57.680    64.1675  59.8425  4.325  58.0725
+##  [97,]  75.84     67.745    82.8425  72.7775 10.065  64.1675
+##  [98,]  87.79     81.815   102.9200  88.8500 14.070  82.8425
+##  [99,]  84.47     86.130    92.6025  88.2875  4.315 102.9200
+## [100,]  86.68     85.575    84.7425  85.2975 -0.555  92.6025
+## [101,]  89.74     88.210    92.1625  89.5275  2.635  84.7425
+## [102,] 100.33     95.035   105.2725  98.4475  6.825  92.1625
+## [103,]     NA         NA         NA       NA     NA 105.2725
+## [104,]     NA         NA         NA       NA     NA 112.0975
+## [105,]     NA         NA         NA       NA     NA 118.9225
+## [106,]     NA         NA         NA       NA     NA 125.7475
+## [107,]     NA         NA         NA       NA     NA 132.5725
+## [108,]     NA         NA         NA       NA     NA 139.3975
+## [109,]     NA         NA         NA       NA     NA 146.2225
+## [110,]     NA         NA         NA       NA     NA 153.0475
+## [111,]     NA         NA         NA       NA     NA 159.8725
+## [112,]     NA         NA         NA       NA     NA 166.6975
+## [113,]     NA         NA         NA       NA     NA 173.5225
+## [114,]     NA         NA         NA       NA     NA 180.3475
+## [115,]     NA         NA         NA       NA     NA 187.1725
+## [116,]     NA         NA         NA       NA     NA 193.9975
+## [117,]     NA         NA         NA       NA     NA 200.8225
+## [118,]     NA         NA         NA       NA     NA 207.6475
+## [119,]     NA         NA         NA       NA     NA 214.4725
+## [120,]     NA         NA         NA       NA     NA 221.2975
+## [121,]     NA         NA         NA       NA     NA 228.1225
+## [122,]     NA         NA         NA       NA     NA 234.9475
+## [123,]     NA         NA         NA       NA     NA 241.7725
+## [124,]     NA         NA         NA       NA     NA 248.5975
+## [125,]     NA         NA         NA       NA     NA 255.4225
+## [126,]     NA         NA         NA       NA     NA 262.2475
+## [127,]     NA         NA         NA       NA     NA 269.0725
+## [128,]     NA         NA         NA       NA     NA 275.8975
+\end{verbatim}
+
+Hasil pemulusan menggunakan metode DMA divisualisasikan sebagai berikut
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{ts.plot}\NormalTok{(data1ts, }\AttributeTok{xlab=}\StringTok{"Time Period "}\NormalTok{, }\AttributeTok{ylab=}\StringTok{"Batubara(USD/ton)"}\NormalTok{, }\AttributeTok{main=} \StringTok{"DMA N=2 Batubara(USD/ton)"}\NormalTok{)}
+\FunctionTok{lines}\NormalTok{(data.gab2[,}\DecValTok{3}\NormalTok{],}\AttributeTok{col=}\StringTok{"green"}\NormalTok{,}\AttributeTok{lwd=}\DecValTok{2}\NormalTok{)}
+\FunctionTok{lines}\NormalTok{(data.gab2[,}\DecValTok{6}\NormalTok{],}\AttributeTok{col=}\StringTok{"red"}\NormalTok{,}\AttributeTok{lwd=}\DecValTok{2}\NormalTok{)}
+\FunctionTok{legend}\NormalTok{(}\StringTok{"topleft"}\NormalTok{,}\FunctionTok{c}\NormalTok{(}\StringTok{"data aktual"}\NormalTok{,}\StringTok{"data pemulusan"}\NormalTok{,}\StringTok{"data peramalan"}\NormalTok{), }\AttributeTok{lty=}\DecValTok{8}\NormalTok{, }\AttributeTok{col=}\FunctionTok{c}\NormalTok{(}\StringTok{"black"}\NormalTok{,}\StringTok{"green"}\NormalTok{,}\StringTok{"red"}\NormalTok{), }\AttributeTok{cex=}\FloatTok{0.8}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{Tugas-P1_files/figure-latex/unnamed-chunk-12-1.pdf}
+
+Dilakukan pengujian data latih dan data uji dengan SSE, MSE, dan MAPE
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\#Menghitung nilai keakuratan data latih}
+\NormalTok{error\_train.dma }\OtherTok{=}\NormalTok{ train\_ma.ts}\SpecialCharTok{{-}}\NormalTok{data.ramal2[}\DecValTok{1}\SpecialCharTok{:}\FunctionTok{length}\NormalTok{(train\_ma.ts)]}
+\NormalTok{SSE\_train.dma }\OtherTok{=} \FunctionTok{sum}\NormalTok{(error\_train.dma[}\DecValTok{4}\SpecialCharTok{:}\FunctionTok{length}\NormalTok{(train\_ma.ts)]}\SpecialCharTok{\^{}}\DecValTok{2}\NormalTok{)}
+\NormalTok{MSE\_train.dma }\OtherTok{=} \FunctionTok{mean}\NormalTok{(error\_train.dma[}\DecValTok{4}\SpecialCharTok{:}\FunctionTok{length}\NormalTok{(train\_ma.ts)]}\SpecialCharTok{\^{}}\DecValTok{2}\NormalTok{)}
+\NormalTok{MAPE\_train.dma }\OtherTok{=} \FunctionTok{mean}\NormalTok{(}\FunctionTok{abs}\NormalTok{((error\_train.dma[}\DecValTok{4}\SpecialCharTok{:}\FunctionTok{length}\NormalTok{(train\_ma.ts)]}\SpecialCharTok{/}\NormalTok{train\_ma.ts[}\DecValTok{4}\SpecialCharTok{:}\FunctionTok{length}\NormalTok{(train\_ma.ts)])}\SpecialCharTok{*}\DecValTok{100}\NormalTok{))}
+
+\NormalTok{akurasi\_train.dma }\OtherTok{\textless{}{-}} \FunctionTok{matrix}\NormalTok{(}\FunctionTok{c}\NormalTok{(SSE\_train.dma, MSE\_train.dma, MAPE\_train.dma))}
+\FunctionTok{row.names}\NormalTok{(akurasi\_train.dma)}\OtherTok{\textless{}{-}} \FunctionTok{c}\NormalTok{(}\StringTok{"SSE"}\NormalTok{, }\StringTok{"MSE"}\NormalTok{, }\StringTok{"MAPE"}\NormalTok{)}
+\FunctionTok{colnames}\NormalTok{(akurasi\_train.dma) }\OtherTok{\textless{}{-}} \FunctionTok{c}\NormalTok{(}\StringTok{"Akurasi m = 2"}\NormalTok{)}
+\NormalTok{akurasi\_train.dma}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##      Akurasi m = 2
+## SSE    3538.246412
+## MSE      35.739863
+## MAPE      5.099316
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\#Menghitung nilai keakuratan data uji}
+\NormalTok{error\_test.dma }\OtherTok{=}\NormalTok{ test\_ma.ts}\SpecialCharTok{{-}}\NormalTok{data.gab2[}\DecValTok{103}\SpecialCharTok{:}\DecValTok{128}\NormalTok{,}\DecValTok{6}\NormalTok{]}
+\NormalTok{SSE\_test.dma }\OtherTok{=} \FunctionTok{sum}\NormalTok{(error\_test.dma}\SpecialCharTok{\^{}}\DecValTok{2}\NormalTok{)}
+\NormalTok{MSE\_test.dma }\OtherTok{=} \FunctionTok{mean}\NormalTok{(error\_test.dma}\SpecialCharTok{\^{}}\DecValTok{2}\NormalTok{)}
+\NormalTok{MAPE\_test.dma }\OtherTok{=} \FunctionTok{mean}\NormalTok{(}\FunctionTok{abs}\NormalTok{((error\_test.dma}\SpecialCharTok{/}\NormalTok{test\_ma.ts}\SpecialCharTok{*}\DecValTok{100}\NormalTok{)))}
+
+\NormalTok{akurasi\_test.dma }\OtherTok{\textless{}{-}} \FunctionTok{matrix}\NormalTok{(}\FunctionTok{c}\NormalTok{(SSE\_test.dma, MSE\_test.dma, MAPE\_test.dma))}
+\FunctionTok{row.names}\NormalTok{(akurasi\_test.dma)}\OtherTok{\textless{}{-}} \FunctionTok{c}\NormalTok{(}\StringTok{"SSE"}\NormalTok{, }\StringTok{"MSE"}\NormalTok{, }\StringTok{"MAPE"}\NormalTok{)}
+\FunctionTok{colnames}\NormalTok{(akurasi\_test.dma) }\OtherTok{\textless{}{-}} \FunctionTok{c}\NormalTok{(}\StringTok{"Akurasi m = 2"}\NormalTok{)}
+\NormalTok{akurasi\_test.dma}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##      Akurasi m = 2
+## SSE   166768.37731
+## MSE     6414.16836
+## MAPE      27.38683
+\end{verbatim}
+
+Kedua nilai baik data latih memiliki nilai MAPE \textless10\% sehingga
+data tersebut dapat dikategorikan sangat baik sedangkan data uji
+memiliki nilai lebih dari 10\% pada m=2.
+
+\#Double Exponential Smoothing (DSE)\#
+
+Pembagian data latih dan data uji dilakukan dengan perbandingan 80\%
+data latih dan 20\% data uji.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\#membagi training dan testing}
+\NormalTok{training}\OtherTok{\textless{}{-}}\NormalTok{data1[}\DecValTok{1}\SpecialCharTok{:}\DecValTok{102}\NormalTok{,]}
+\NormalTok{testing}\OtherTok{\textless{}{-}}\NormalTok{data1[}\DecValTok{103}\SpecialCharTok{:}\DecValTok{128}\NormalTok{,]}
+\NormalTok{train.ts }\OtherTok{\textless{}{-}} \FunctionTok{ts}\NormalTok{(training\_ma}\SpecialCharTok{$}\StringTok{\textasciigrave{}}\AttributeTok{Batubara(USD/ton)}\StringTok{\textasciigrave{}}\NormalTok{)}
+\NormalTok{test.ts }\OtherTok{\textless{}{-}} \FunctionTok{ts}\NormalTok{(testing\_ma}\SpecialCharTok{$}\StringTok{\textasciigrave{}}\AttributeTok{Batubara(USD/ton)}\StringTok{\textasciigrave{}}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+Pemulusan dengan metode DES menggunakan fungsi `HoltWinters()
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\#Lamda=0.2 dan gamma=0.2}
+\NormalTok{des}\FloatTok{.1}\OtherTok{\textless{}{-}} \FunctionTok{HoltWinters}\NormalTok{(train.ts, }\AttributeTok{gamma =} \ConstantTok{FALSE}\NormalTok{, }\AttributeTok{beta =} \FloatTok{0.2}\NormalTok{, }\AttributeTok{alpha =} \FloatTok{0.2}\NormalTok{)}
+\FunctionTok{plot}\NormalTok{(des}\FloatTok{.1}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{Tugas-P1_files/figure-latex/unnamed-chunk-16-1.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\#ramalan}
+\NormalTok{ramalandes1}\OtherTok{\textless{}{-}} \FunctionTok{forecast}\NormalTok{(des}\FloatTok{.1}\NormalTok{, }\AttributeTok{h=}\DecValTok{10}\NormalTok{)}
+\NormalTok{ramalandes1}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##     Point Forecast     Lo 80    Hi 80     Lo 95    Hi 95
+## 103       90.30620  78.13733 102.4751  71.69552 108.9169
+## 104       94.72036  82.20594 107.2348  75.58120 113.8595
+## 105       99.13453  86.16455 112.1045  79.29866 118.9704
+## 106      103.54869  90.00676 117.0906  82.83810 124.2593
+## 107      107.96286  93.72996 122.1958  86.19553 129.7302
+## 108      112.37702  97.33481 127.4192  89.37194 135.3821
+## 109      116.79119 100.82445 132.7579  92.37217 141.2102
+## 110      121.20535 104.20374 138.2070  95.20363 147.2071
+## 111      125.61952 107.47852 143.7605  97.87525 153.3638
+## 112      130.03368 110.65498 149.4124 100.39651 159.6709
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\#Lamda=0.6 dan gamma=0.3}
+\NormalTok{des}\FloatTok{.2}\OtherTok{\textless{}{-}} \FunctionTok{HoltWinters}\NormalTok{(train.ts, }\AttributeTok{gamma =} \ConstantTok{FALSE}\NormalTok{, }\AttributeTok{beta =} \FloatTok{0.1657846}\NormalTok{, }\AttributeTok{alpha =} \DecValTok{1}\NormalTok{)}
+\FunctionTok{plot}\NormalTok{(des}\FloatTok{.2}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{Tugas-P1_files/figure-latex/unnamed-chunk-16-2.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\#ramalan}
+\NormalTok{ramalandes2}\OtherTok{\textless{}{-}} \FunctionTok{forecast}\NormalTok{(des}\FloatTok{.2}\NormalTok{, }\AttributeTok{h=}\DecValTok{10}\NormalTok{)}
+\NormalTok{ramalandes2}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##     Point Forecast     Lo 80    Hi 80    Lo 95    Hi 95
+## 103       104.5898  98.31726 110.8624 94.99677 114.1828
+## 104       108.8496  99.21547 118.4837 94.11547 123.5837
+## 105       113.1094 100.35880 125.8600 93.60904 132.6098
+## 106       117.3692 101.53281 133.2056 93.14952 141.5889
+## 107       121.6290 102.66535 140.5927 92.62659 150.6315
+## 108       125.8888 103.72517 148.0525 91.99244 159.7852
+## 109       130.1486 104.69720 155.6001 91.22403 169.0732
+## 110       134.4084 105.57397 163.2429 90.30993 178.5069
+## 111       138.6682 106.35193 170.9845 89.24472 188.0918
+## 112       142.9280 107.02972 178.8264 88.02630 197.8298
+\end{verbatim}
+
+Membandingkan plot data latih dan data uji
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\#Visually evaluate the prediction}
+\FunctionTok{plot}\NormalTok{(data1ts)}
+\FunctionTok{lines}\NormalTok{(des}\FloatTok{.1}\SpecialCharTok{$}\NormalTok{fitted[,}\DecValTok{1}\NormalTok{], }\AttributeTok{lty=}\DecValTok{2}\NormalTok{, }\AttributeTok{col=}\StringTok{"blue"}\NormalTok{)}
+\FunctionTok{lines}\NormalTok{(ramalandes1}\SpecialCharTok{$}\NormalTok{mean, }\AttributeTok{col=}\StringTok{"red"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{Tugas-P1_files/figure-latex/unnamed-chunk-17-1.pdf}
+
+Mendapatkan nilai optimum DES
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\#Lamda dan gamma optimum}
+\NormalTok{des.opt}\OtherTok{\textless{}{-}} \FunctionTok{HoltWinters}\NormalTok{(train.ts, }\AttributeTok{gamma =} \ConstantTok{FALSE}\NormalTok{)}
+\NormalTok{des.opt}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Holt-Winters exponential smoothing with trend and without seasonal component.
+## 
+## Call:
+## HoltWinters(x = train.ts, gamma = FALSE)
+## 
+## Smoothing parameters:
+##  alpha: 1
+##  beta : 0.1657846
+##  gamma: FALSE
+## 
+## Coefficients:
+##         [,1]
+## a 100.330000
+## b   4.259804
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{plot}\NormalTok{(des.opt)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{Tugas-P1_files/figure-latex/unnamed-chunk-18-1.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\#ramalan}
+\NormalTok{ramalandesopt}\OtherTok{\textless{}{-}} \FunctionTok{forecast}\NormalTok{(des.opt, }\AttributeTok{h=}\DecValTok{10}\NormalTok{)}
+\NormalTok{ramalandesopt}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##     Point Forecast     Lo 80    Hi 80    Lo 95    Hi 95
+## 103       104.5898  98.31726 110.8624 94.99677 114.1828
+## 104       108.8496  99.21547 118.4837 94.11547 123.5837
+## 105       113.1094 100.35880 125.8600 93.60904 132.6098
+## 106       117.3692 101.53281 133.2056 93.14952 141.5889
+## 107       121.6290 102.66535 140.5927 92.62659 150.6315
+## 108       125.8888 103.72517 148.0525 91.99244 159.7852
+## 109       130.1486 104.69720 155.6001 91.22403 169.0732
+## 110       134.4084 105.57397 163.2429 90.30993 178.5069
+## 111       138.6682 106.35194 170.9845 89.24472 188.0918
+## 112       142.9280 107.02972 178.8264 88.02630 197.8298
+\end{verbatim}
+
+Perhitungan akurasi pada data latih maupun data uji dengan ukuran
+akurasi SSE, MSE dan MAPE.
+
+\hypertarget{akurasi-data-latih}{%
+\paragraph{Akurasi Data Latih}\label{akurasi-data-latih}}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\#Akurasi Data Training}
+\NormalTok{ssedes.train1}\OtherTok{\textless{}{-}}\NormalTok{des}\FloatTok{.1}\SpecialCharTok{$}\NormalTok{SSE}
+\NormalTok{msedes.train1}\OtherTok{\textless{}{-}}\NormalTok{ssedes.train1}\SpecialCharTok{/}\FunctionTok{length}\NormalTok{(train.ts)}
+\NormalTok{sisaandes1}\OtherTok{\textless{}{-}}\NormalTok{ramalandes1}\SpecialCharTok{$}\NormalTok{residuals}
+\FunctionTok{head}\NormalTok{(sisaandes1)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Time Series:
+## Start = 1 
+## End = 6 
+## Frequency = 1 
+## [1]        NA        NA  0.940000 -1.615600 -5.295456 -5.257523
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{mapedes.train1 }\OtherTok{\textless{}{-}} \FunctionTok{sum}\NormalTok{(}\FunctionTok{abs}\NormalTok{(sisaandes1[}\DecValTok{3}\SpecialCharTok{:}\FunctionTok{length}\NormalTok{(train.ts)]}\SpecialCharTok{/}\NormalTok{train.ts[}\DecValTok{3}\SpecialCharTok{:}\FunctionTok{length}\NormalTok{(train.ts)])}
+                      \SpecialCharTok{*}\DecValTok{100}\NormalTok{)}\SpecialCharTok{/}\FunctionTok{length}\NormalTok{(train.ts)}
+
+\NormalTok{akurasides}\FloatTok{.1} \OtherTok{\textless{}{-}} \FunctionTok{matrix}\NormalTok{(}\FunctionTok{c}\NormalTok{(ssedes.train1,msedes.train1,mapedes.train1))}
+\FunctionTok{row.names}\NormalTok{(akurasides}\FloatTok{.1}\NormalTok{)}\OtherTok{\textless{}{-}} \FunctionTok{c}\NormalTok{(}\StringTok{"SSE"}\NormalTok{, }\StringTok{"MSE"}\NormalTok{, }\StringTok{"MAPE"}\NormalTok{)}
+\FunctionTok{colnames}\NormalTok{(akurasides}\FloatTok{.1}\NormalTok{) }\OtherTok{\textless{}{-}} \FunctionTok{c}\NormalTok{(}\StringTok{"Akurasi lamda=0.2 dan gamma=0.2"}\NormalTok{)}
+\NormalTok{akurasides}\FloatTok{.1}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##      Akurasi lamda=0.2 dan gamma=0.2
+## SSE                      9007.770660
+## MSE                        88.311477
+## MAPE                        7.925563
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{ssedes.train2}\OtherTok{\textless{}{-}}\NormalTok{des}\FloatTok{.2}\SpecialCharTok{$}\NormalTok{SSE}
+\NormalTok{msedes.train2}\OtherTok{\textless{}{-}}\NormalTok{ssedes.train2}\SpecialCharTok{/}\FunctionTok{length}\NormalTok{(train.ts)}
+\NormalTok{sisaandes2}\OtherTok{\textless{}{-}}\NormalTok{ramalandes2}\SpecialCharTok{$}\NormalTok{residuals}
+\FunctionTok{head}\NormalTok{(sisaandes2)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Time Series:
+## Start = 1 
+## End = 6 
+## Frequency = 1 
+## [1]         NA         NA  0.9400000 -2.4858375 -3.7737239 -0.3780986
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{mapedes.train2 }\OtherTok{\textless{}{-}} \FunctionTok{sum}\NormalTok{(}\FunctionTok{abs}\NormalTok{(sisaandes2[}\DecValTok{3}\SpecialCharTok{:}\FunctionTok{length}\NormalTok{(train.ts)]}\SpecialCharTok{/}\NormalTok{train.ts[}\DecValTok{3}\SpecialCharTok{:}\FunctionTok{length}\NormalTok{(train.ts)])}
+                      \SpecialCharTok{*}\DecValTok{100}\NormalTok{)}\SpecialCharTok{/}\FunctionTok{length}\NormalTok{(train.ts)}
+
+\NormalTok{akurasides}\FloatTok{.2} \OtherTok{\textless{}{-}} \FunctionTok{matrix}\NormalTok{(}\FunctionTok{c}\NormalTok{(ssedes.train2,msedes.train2,mapedes.train2))}
+\FunctionTok{row.names}\NormalTok{(akurasides}\FloatTok{.2}\NormalTok{)}\OtherTok{\textless{}{-}} \FunctionTok{c}\NormalTok{(}\StringTok{"SSE"}\NormalTok{, }\StringTok{"MSE"}\NormalTok{, }\StringTok{"MAPE"}\NormalTok{)}
+\FunctionTok{colnames}\NormalTok{(akurasides}\FloatTok{.2}\NormalTok{) }\OtherTok{\textless{}{-}} \FunctionTok{c}\NormalTok{(}\StringTok{"Akurasi lamda=1 dan gamma=0.1657846"}\NormalTok{)}
+\NormalTok{akurasides}\FloatTok{.2}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##      Akurasi lamda=1 dan gamma=0.1657846
+## SSE                          2376.006342
+## MSE                            23.294180
+## MAPE                            4.184672
+\end{verbatim}
+
+Hasil akurasi dari data latih didapatkan skenario 2 dengan lamda=1 dan
+gamma=0.1657846 memiliki hasil yang lebih baik. Namun untuk kedua
+skenario dapat dikategorikan peramalan sangat baik berdasarkan nilai
+MAPE-nya.
+
+\end{document}

@@ -1,9 +1,9 @@
 ---
 output:
-  pdf_document: default
   html_document: default
+  pdf_document: default
 ---
-install packagesnya dulu kan
+## Install Packages
 ```{r}
 #install.packages("forecast")
 #install.packages("graphics")
@@ -11,7 +11,7 @@ install packagesnya dulu kan
 #install.packages("TSA")
 ```
 
-nah ini udah selesai dan kita panggil....
+## Pemanggilan Packages
 ```{r}
 library("forecast")
 library("graphics")
@@ -19,39 +19,40 @@ library("TTR")
 library("TSA")
 ```
 
-memanggil data dari github
+## Memanggil data dari github
 ```{r}
 library(rio)
 data1 <- import("https://raw.githubusercontent.com/Safwa40/MPDW/main/Pertemuan%201/Data1.csv")
 ```
-
-lihat datanya
+## Eksplorasi Data
 ```{r}
 View(data1)
 str(data1)
 dim(data1)
 ```
 
-ngubah data jadi time series
+## Merubah Data jadi Time Series
 ```{r}
 data1ts <- ts(data1$'Batubara(USD/ton)')
 print(data1ts)
 ```
 
-ini untuk ngeliat analisis datanya
+## Melihat Analisis Datanya
 ```{r}
 summary(data1ts)
 ```
 
-Pola plot tersebut tidak berbentuk musiman ataupun konstan sehingga dicoba pemulusan menggunakan DMA dan DES karena SMA dan SES lebih cocok untuk data yang stasioner
 ```{r}
 ts.plot(data1ts, xlab="Time Period", ylab="Harga Acuan Batu Bara (USD/ton)", 
         main = "Time Series Plot")
 points(data1ts)
 ```
+Pola plot tersebut tidak berbentuk musiman ataupun konstan sehingga dicoba pemulusan menggunakan DMA dan DES karena SMA dan SES lebih cocok untuk data yang stasioner
+
+
 #Double Moving Average
 
-Pembagian Data dulu
+Pembagian Data Latih da Data Uji
 ```{r}
 #Pembagian data latih dan data uji dilakukan dengan perbandingan 80% data latih dan 20% data uji.
 #membagi data latih dan data uji
@@ -77,9 +78,6 @@ plot(test_ma.ts, col="blue",main="Plot data uji")
 points(test_ma.ts)
 ```
 
-
-
-
 #Double Moving Average (DMA)#
 Metode pemulusan Double Moving Average (DMA) pada dasarnya mirip dengan SMA. Namun demikian, metode ini lebih cocok digunakan untuk pola data trend. Proses pemulusan dengan rata rata dalam metode ini dilakukan sebanyak 2 kali.
 
@@ -87,8 +85,6 @@ Metode pemulusan Double Moving Average (DMA) pada dasarnya mirip dengan SMA. Nam
 data.sma<-SMA(train_ma.ts, n=2)
 data.sma
 ```
-
-
 Dengan nilai m yang berbeda dimulai dari 4, 3, dan 2 diperoleh nilai mape terekcil dengan nilai m = 2.
 ```{r}
 dma <- SMA(data.sma, n = 2)
@@ -235,36 +231,4 @@ akurasides.2
 
 Hasil akurasi dari data latih didapatkan skenario 2 dengan lamda=1 dan gamma=0.1657846 memiliki hasil yang lebih baik. Namun untuk kedua skenario dapat dikategorikan peramalan sangat baik berdasarkan nilai MAPE-nya.
 
-#### Akurasi Data Uji
 
-```{r}
-#Akurasi Data Testing
-selisihdes1<-ramalandes1-testing_ma$`Batubara(USD/ton)`
-
-SSEtestingdes1<-sum(selisihdes1^2)
-MSEtestingdes1<-SSEtestingdes1/length(testing$Yt)
-MAPEtestingdes1<-sum(abs(selisihdes1/testing$Yt)*100)/length(testing$Yt)
-
-selisihdes2<-ramalandes2$mean-testing$Yt
-selisihdes2
-
-SSEtestingdes2<-sum(selisihdes2^2)
-MSEtestingdes2<-SSEtestingdes2/length(testing$Yt)
-MAPEtestingdes2<-sum(abs(selisihdes2/testing$Yt)*100)/length(testing$Yt)
-
-selisihdesopt<-ramalandesopt$mean-testing$Yt
-selisihdesopt
-
-SSEtestingdesopt<-sum(selisihdesopt^2)
-MSEtestingdesopt<-SSEtestingdesopt/length(testing$Yt)
-MAPEtestingdesopt<-sum(abs(selisihdesopt/testing$Yt)*100)/length(testing$Yt)
-
-akurasitestingdes <-
-  matrix(c(SSEtestingdes1,MSEtestingdes1,MAPEtestingdes1,SSEtestingdes2,MSEtestingdes2,
-           MAPEtestingdes2,SSEtestingdesopt,MSEtestingdesopt,MAPEtestingdesopt),
-         nrow=3,ncol=3)
-row.names(akurasitestingdes)<- c("SSE", "MSE", "MAPE")
-colnames(akurasitestingdes) <- c("des ske1","des ske2","des opt")
-akurasitestingdes
-```
-Masih eror

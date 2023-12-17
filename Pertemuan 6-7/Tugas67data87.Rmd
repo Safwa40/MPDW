@@ -23,8 +23,8 @@ Digunakan data pada pertemuan pertama mengenai harga acuan batubara(USD/ton) set
 
 ```{r}
 library(rio)
-databaraa<-import("https://raw.githubusercontent.com/Safwa40/MPDW/main/Data/Data1.csv",header=T)
-databara<-datatransformasi
+databaraa<-import("https://raw.githubusercontent.com/Safwa40/MPDW/main/Pertemuan%201/Data1.csv",header=T)
+databara<-databaraa$`Batubara(USD/ton)`
 databara.ts<-ts(databara)
 ```
 
@@ -137,7 +137,7 @@ Berdasarkan plot data deret waktu, terlihat bahwa data sudah stasioner dalam rat
 #### Plot ACF
 
 ```{r}
-acf(train.diff2)
+acf(train.diff1)
 ```
 
 Berdasarkan plot tersebut, terlihat bahwa plot ACF cuts off pada lag ke 1. Hal ini menandakan data sudah stasioner dalam rataan dan ketidakstasioneran data telah berhasil tertangani.
@@ -145,14 +145,14 @@ Berdasarkan plot tersebut, terlihat bahwa plot ACF cuts off pada lag ke 1. Hal i
 #### Uji ADF
 
 ```{r}
-tseries::adf.test(train.diff2)
+tseries::adf.test(train.diff1)
 ```
 
 $H_0$ : Data tidak stasioner dalam rataan
 
 $H_1$ : Data stasioner dalam rataan
 
-Berdasarkan uji ADF tersebut, didapat *p-value* sebesar 0.01 yang lebih besar dari taraf nyata 5% sehingga terima $H_0$ atau data stasioner dalam rataan. Hal ini sesuai dengan hasil eksplorasi menggunakan plot time series dan plot ACF, sehingga dalam hal ini ketidakstasioneran data belum berhasil ditangani dan belum dapat dilanjutkan ke pemodelan
+Berdasarkan uji ADF tersebut, didapat *p-value* sebesar 0.07076 yang lebih besar dari taraf nyata 5% sehingga tolak $H_0$ atau data stasioner dalam rataan. Hal ini sesuai dengan hasil eksplorasi menggunakan plot time series dan plot ACF, sehingga dalam hal ini ketidakstasioneran data berhasil ditangani dan dapat dilanjutkan ke pemodelan
 
 
 
@@ -161,7 +161,7 @@ Berdasarkan uji ADF tersebut, didapat *p-value* sebesar 0.01 yang lebih besar da
 #### Plot ACF
 
 ```{r}
-acf(train.diff2)
+acf(train.diff1)
 ```
 
 Berdasarkan plot tersebut, terlihat bahwa plot ACF cenderung *cuts off* pada lag ke 1, sehingga jika plot PACF dianggap *tails of*, maka model tentatifnya adalah ARIMA(0,1,1).
@@ -169,7 +169,7 @@ Berdasarkan plot tersebut, terlihat bahwa plot ACF cenderung *cuts off* pada lag
 #### Plot PACF
 
 ```{r}
-pacf(train.diff2)
+pacf(train.diff1)
 ```
 
 Berdasarkan plot tersebut, terlihat bahwa plot PACF cenderung *cuts off* pada lag ke 1, sehingga jika plot ACF dianggap *tails of*, maka model tentatifnya adalah ARIMA(4,1,0).
@@ -179,10 +179,10 @@ Jika baik plot ACF maupun plot PACF keduanya dianggap tails of, maka model yang 
 #### Plot EACF
 
 ```{r}
-eacf(train.diff2)
+eacf(train.diff1)
 ```
 
-Identifikasi model menggunakan plot EACF dilakukan dengan melihat ujung segitiga pada pola segitiga nol. Dalam hal ini model tentatif yang terbentuk adalah ARIMA(0,1,1), ARIMA(0,1,2), ARIMA(0,1,3), ARIMA(1,1,2), ARIMA(1,1,3), ARIMA(2,1,3), dan ARIMA(4,1,1).
+Identifikasi model menggunakan plot EACF dilakukan dengan melihat ujung segitiga pada pola segitiga nol. Dalam hal ini model tentatif yang terbentuk adalah ARIMA(1,1,1) ARIMA(0,1,1), ARIMA(2,1,2), ARIMA(0,1,2), ARIMA(1,1,2) dan ARIMA(4,1,2).
 
 ### Pendugaan Parameter Model Tentatif
 
@@ -202,36 +202,36 @@ summary(model2.da) #AIC=509.89
 lmtest::coeftest(model2.da) #seluruh parameter signifikan
 ```
 
-#### ARIMA(0,1,3)
+#### ARIMA(1,1,1)
 
 ```{r}
-model3.da=Arima(train.diff2, order=c(0,1,3),method="ML")
-summary(model3.da) #AIC=507.3
+model3.da=Arima(train.diff2, order=c(1,1,1),method="ML")
+summary(model3.da) #AIC=527.58
 lmtest::coeftest(model3.da) #seluruh parameter signifikan
+```
+
+#### ARIMA(2,1,2)
+
+```{r}
+model4.da<-Arima(train.diff2, order=c(2,1,2),method="ML")
+summary(model4.da) #AIC=508.97
+lmtest::coeftest(model4.da) #3/4 parameter signifikan
 ```
 
 #### ARIMA(1,1,2)
 
 ```{r}
-model4.da<-Arima(train.diff2, order=c(1,1,2),method="ML")
-summary(model4.da) #AIC=507.82
-lmtest::coeftest(model4.da) #seluruh parameter signifikan
+model5.da=Arima(train.diff2, order=c(1,1,2),method="ML")
+summary(model5.da) #AIC=507.82 
+lmtest::coeftest(model5.da) #seluruh parameter signifikan
 ```
 
-#### ARIMA(1,1,3)
+#### ARIMA(4,1,2)
 
 ```{r}
-model5.da=Arima(train.diff2, order=c(1,1,3),method="ML")
-summary(model5.da) #AIC=509.3 
-lmtest::coeftest(model5.da) #hanya 1 parameter signifikan
-```
-
-#### ARIMA(2,1,3)
-
-```{r}
-model6.da=Arima(train.diff2, order=c(2,1,3),method="ML")
-summary(model6.da) #AIC=510.38
-lmtest::coeftest(model6.da) # 4/5 parameter signifikan
+model6.da=Arima(train.diff2, order=c(4,1,2),method="ML")
+summary(model6.da) #AIC=517
+lmtest::coeftest(model6.da) # tidak ada
 ```
 
 #### ARIMA(4,1,1)
@@ -251,7 +251,7 @@ Model terbaik hasil identifikasi kemudian dicek asumsi sisaannya. Sisaan model A
 
 ```{r}
 #Eksplorasi 
-sisaan.da <- model4.da$residuals 
+sisaan.da <- model5.da$residuals 
 par(mfrow=c(2,2)) 
 qqnorm(sisaan.da) 
 qqline(sisaan.da, col = "blue", lwd = 2) 
@@ -317,19 +317,6 @@ $H_1$ : nilai tengah sisaan tidak sama dengan 0
 
 Berdasarkan uji-ttersebut, didapat *p-value* sebesar 0.834 yang lebih besar dari taraf nyata 5% sehingga tak tolak $H_0$ dan menandakan bahwa nilai tengah sisaan sama dengan nol. Hal ini sesuai dengan eksplorasi.
 
-### Penanganan ketidaknormalan data
-```{r}
-library(car)
-transformasi <- powerTransform(databara)
-transformasi #-1.172155 
-
-datatransformasi <-databara^-1.172155
-datatransformasi
-```
-```{r}
-
-```
-
 
 ### Overfitting
 
@@ -337,13 +324,13 @@ Tahapan selanjutnya adalah *overfitting* dilakukan dengan menaikkan orde AR(p) d
 
 ```{r}
 #---OVERFITTING---#
-model1a.ma2=Arima(train.diff, order=c(1,1,2),method="ML")
-summary(model1a.ma2) #550.55
-lmtest::coeftest(model1a.ma2) #ar1 dan ma2 tidak signifikan
+model1a.ma2=Arima(train.diff1, order=c(1,1,3),method="ML")
+summary(model1a.ma2) #504.27
+lmtest::coeftest(model1a.ma2) #tidak ada yang signifikan
 
-model1b.ma2=Arima(train.diff, order=c(0,1,3),method="ML")
-summary(model1b.ma2) #550.52
-lmtest::coeftest(model1b.ma2) #ma3 tidak signifikan
+model1b.ma2=Arima(train.diff1, order=c(2,1,2),method="ML")
+summary(model1b.ma2) #503.34
+lmtest::coeftest(model1b.ma2) #ma2 dan ar1 signifikan
 
 #model yang dipilih adalah model awal, yaitu ARIMA(0,1,2)
 ```
@@ -356,7 +343,7 @@ Peramalan dilakukan menggunakan fungsi `forecast()` . Contoh peramalan berikut i
 
 ```{r}
 #---FORECAST---#
-ramalan.da <- forecast::forecast(model2.da, h = 30) 
+ramalan.da <- forecast::forecast(model5.da, h = 42) 
 ramalan.da
 data.ramalan.da <- ramalan.da$mean
 plot(ramalan.da)
@@ -365,7 +352,7 @@ plot(ramalan.da)
 Berdasarkan hasil plot ramalan di atas, dapat dilihat bahwa ramalan ARIMA(0,1,2) cenderung stabil hingga akhir periode. Selanjutnya, dapat dicari nilai akurasi antara hasil ramalan dengan data uji sebagai berikut.
 
 ```{r}
-pt_1 <- train.ts[96] #nilai akhir data latih
+pt_1 <- train.ts[87] #nilai akhir data latih
 hasil.forc.Diff <- data.ramalan.da
 hasil <- diffinv(hasil.forc.Diff, differences = 1) + pt_1
 #has.1 sama hasilnta dengan: cumsum(c(pt_1,hasil.forc.Diff))
